@@ -2,10 +2,11 @@
   "name": "shop-be",
   "version": "0.0.1",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
     "start": "ts-node index.ts",
-    "start:dev": "tsnd index.ts"
+    "start:dev": "tsnd index.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

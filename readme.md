@@ -18,15 +18,15 @@ Backend for ebook shop front-end project <a href="https://github.com/LukasP-ghub
 ### Screenshots
 
 <div align="center"> 
-  <img src="https://i.ibb.co/R9McPdT/ebooks-get-All.jpg" alt="ebooks-get-All" />
+ <a href="https://ibb.co/kxrX0v2"><img src="https://i.ibb.co/R9McPdT/ebooks-get-All.jpg" alt="ebooks-get-All"></a>
 </div>
 
 <div align="center"> 
-  <img src="https://i.ibb.co/pQt1Pgf/ebooks-get-many.jpg" alt="ebooks-get-many" />
+ <a href="https://ibb.co/5kN19dr"><img src="https://i.ibb.co/pQt1Pgf/ebooks-get-many.jpg" alt="ebooks-get-many"></a>
 </div>
 
 <div align="center"> 
-  <img src="https://i.ibb.co/JxrG8th/ebooks-get-one.jpg" alt="ebooks-get-one" />
+  <a href="https://ibb.co/PT1PJjS"><img src="https://i.ibb.co/JxrG8th/ebooks-get-one.jpg" alt="ebooks-get-one"></a>
 </div>
 
 <!-- TechStack -->

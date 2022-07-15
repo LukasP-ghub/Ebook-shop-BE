@@ -22,28 +22,32 @@ export class EbookRecord implements Ebook {
     public category: string[];
 
     constructor(obj: Ebook) {
-        if (!obj.title || obj.title.length > 100) {
+        if (!obj?.title || typeof obj.title !== 'string' || obj.title.length > 100) {
             throw new ValidationError('Tytuł musi mieć od 1 do 100 znaków.');
         }
 
-        if (!obj.num_pages || obj.num_pages > 9999) {
+        if (!obj?.num_pages || typeof obj.num_pages !== 'number' || obj.num_pages < 0 || obj.num_pages > 9999) {
             throw new ValidationError('Liczna stron musi mieć więcej niż 1 i mniej niż 9999.');
         }
 
-        if (!obj.publication_date) {
+        if (!obj?.publication_date) {
             throw new ValidationError('Niepoprawna data.');
         }
 
-        this.ebook_id = obj.ebook_id;
+        if (!obj?.price || typeof obj.price === 'boolean' || isNaN(obj.price) || obj.price < 0 || obj.price > 999.99) {
+            throw new ValidationError('Niepoprawna cena produktu');
+        }
+
+        this.ebook_id = obj?.ebook_id || uuid();
         this.author = obj.author;
         this.title = obj.title;
         this.num_pages = obj.num_pages;
         this.publication_date = obj.publication_date;
-        this.description = obj.description;
+        this.description = obj?.description || 'Brak opisu';
         this.price = obj.price;
-        this.publisher_name = obj.publisher_name;
-        this.language_code = obj.language_code;
-        this.language_name = obj.language_name;
+        this.publisher_name = `${obj.publisher_name}`;
+        this.language_code = `${obj.language_code}`;
+        this.language_name = `${obj.language_name}`;
         this.category = obj.category;
     }
 

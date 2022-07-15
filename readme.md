@@ -47,7 +47,7 @@ Backend for ebook shop front-end project <a href="https://github.com/LukasP-ghub
   </ul>
 </details>
 
-<!-- Features -->
+<!-- Endpoints -->
 ### Endpoints
 
 - /ebooks
@@ -92,6 +92,8 @@ Install dependencies
 ```bash
   npm install
 ```
+
+Import database
 
 Start the server
 

@@ -61,6 +61,16 @@ Backend for ebook shop front-end project <a href="https://github.com/LukasP-ghub
   - <em>available query parameters:</em> 
     - ebook_id
 
+<!-- Env Variables -->
+### Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`HOST`="localhost"
+`USER`="root"
+`PASSWORD`=""
+`DATABASE`="ebook-store"
+
 ## Getting Started
    
 ### Run Locally

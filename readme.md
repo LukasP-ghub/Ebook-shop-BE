@@ -18,23 +18,16 @@ Backend for ebook shop front-end project <a href="https://github.com/LukasP-ghub
 ### Screenshots
 
 <div align="center"> 
-  <img src="https://drive.google.com/file/d/1OWD-orODY279vRoUR6lqhx3E5Nn9hIYD/view?usp=sharing" alt="screenshot" />
-  ![alt text](https://drive.google.com/file/d/1OWD-orODY279vRoUR6lqhx3E5Nn9hIYD/view?usp=sharing "All ebooks")
-  <em>All ebooks</em>
+  <img src="https://i.ibb.co/R9McPdT/ebooks-get-All.jpg" alt="ebooks-get-All" />
 </div>
 
 <div align="center"> 
-  <img src="https://drive.google.com/file/d/1cDcUgeDeUrRCiVT1Zim3i2TQH0_mulGC/view?usp=sharing" alt="screenshot" />
-   ![alt text](https://drive.google.com/file/d/1cDcUgeDeUrRCiVT1Zim3i2TQH0_mulGC/view?usp=sharing "Ebooks by query")
-  <em>Ebooks by query</em>
+  <img src="https://i.ibb.co/pQt1Pgf/ebooks-get-many.jpg" alt="ebooks-get-many" />
 </div>
 
 <div align="center"> 
-  <img src="https://drive.google.com/file/d/1RuxrsiCEJY8FJ8IeUZoc5M73bfRZ34So/view?usp=sharing" alt="screenshot" />
-   ![alt text](https://drive.google.com/file/d/1RuxrsiCEJY8FJ8IeUZoc5M73bfRZ34So/view?usp=sharing "Ebook by id")
-  <em>Ebook by id</em>
+  <img src="https://i.ibb.co/JxrG8th/ebooks-get-one.jpg" alt="ebooks-get-one" />
 </div>
-
 
 <!-- TechStack -->
 ### Tech Stack

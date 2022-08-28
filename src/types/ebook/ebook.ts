@@ -1,8 +1,8 @@
-import { EbookRecord } from "../../records/ebook.record";
+//import { EbookRecord } from "../../records/ebook.record";
 
-export interface ListEbooksRes {
-    ebooksList: EbookRecord[];
-}
+// export interface ListEbooksRes {
+//     ebooksList: EbookRecord[];
+// }
 
 export enum EbookGroupOptions {
     ebook_id,

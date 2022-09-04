@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EbooksService } from './ebooks.service';
 import { CreateEbookDto } from './dto/create-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
+import { EbookDBSearchKey } from '../types';
 
 @Controller('ebooks')
 export class EbooksController {
@@ -18,13 +19,13 @@ export class EbooksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ebooksService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.ebooksService.findOne(+id);
   }
 
   @Get('/ebooks/:id')
-  findMany(@Param('id') id: string) {
-    return this.ebooksService.findOne(+id);
+  async findMany(@Param('id') id: string) {
+    return await this.ebooksService.getMany({key:EbookDBSearchKey.author_id, phrase:id});
   }
 
   @Patch(':id')

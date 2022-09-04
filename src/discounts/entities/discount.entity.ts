@@ -9,15 +9,15 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Discount extends BaseEntity {
+export class Discount {
   @PrimaryGeneratedColumn('uuid')
-  discountId: string;
+  discount_id: string;
 
   @Column({
     nullable: false,
     length: 150,
   })
-  discountName: string
+  discount_name: string
 
   @Column({
     type: 'decimal',
@@ -25,6 +25,6 @@ export class Discount extends BaseEntity {
     scale: 2,
     nullable: true,
   })
-  discountValue: number;
+  discount_value: number;
 
 }

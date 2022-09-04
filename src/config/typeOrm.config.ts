@@ -10,5 +10,5 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
   entities: ['dist/**/**.entity{.ts,.js}'],
   bigNumberStrings: false,
   logging: true,
-  synchronize: true,
+  synchronize: false,
 };

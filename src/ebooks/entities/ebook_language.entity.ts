@@ -10,22 +10,22 @@ import {
 import { Ebook } from './ebook.entity';
 
 @Entity()
-export class EbookLanguage extends BaseEntity {
+export class EbookLanguage {
   @PrimaryGeneratedColumn('uuid')
-  languageId: string;
+  language_id: string;
 
   @Column({
     nullable: false,
     length: 20,
   })
-  languageName: string
+  language_name: string
 
   @Column({
     length: 5,
     nullable: false,
   })
-  languageCode: string;
+  language_code: string;
 
-  @OneToMany(() => Ebook, (entity) => entity.languageId)
+  @OneToMany(() => Ebook, (entity) => entity.language_id)
   ebook: Ebook[]
 }

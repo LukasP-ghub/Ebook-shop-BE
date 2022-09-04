@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EbookDBSearchKey, EbookDBSearchOptions } from '../types/ebook/ebook';
 import { Repository } from 'typeorm';
+import { EbookDBSearchKey, EbookDBSearchOptions } from '../types/ebook/ebook';
 import { CreateEbookDto } from './dto/create-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
 import { Ebook } from './entities/ebook.entity';
@@ -33,29 +33,22 @@ export class EbooksService {
     return `This action removes a #${id} ebook`;
   }
 
-  async getMany({ key = EbookDBSearchKey.title, phrase = '', maxPrice = 999, minPrice = 0, }: EbookDBSearchOptions): Promise<Ebook[]> {
-    return await this.ebooksRepository
+  async getMany({ key = EbookDBSearchKey.title, phrase = 'Dummy', maxPrice = 20, minPrice = 0, }: EbookDBSearchOptions): Promise<Ebook[]> {
+    const res= await this.ebooksRepository
       .createQueryBuilder("ebook")
       .leftJoinAndSelect("ebook.author", "ebook_author")
       .leftJoinAndSelect("ebook.category", "ebook_category")
       .leftJoinAndSelect("ebook.discount", "ebook_discount")
-      .leftJoinAndSelect("ebook.languageId", "ebook_language")
-      .leftJoinAndSelect("ebook.publisherId", "publisher")
-      .leftJoinAndSelect("category", "category")
-      .leftJoinAndSelect("author", "author")
-      .select(['ebook_author.ebook_id', 'ebook_author.author_id', 'ebook.title', 'ebook.num_pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'author.author_name', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'category.category_name'])
-      .where("ebook_author.ebook_id=ebook.ebook_id")
-      .andWhere("ebook_author.author_id=author.author_id")
-      .andWhere("ebook.publisher_id=publisher.publisher_id")
-      .andWhere("ebook.language_id=ebook_language.language_id")
-      .andWhere("ebook_category.ebook_id=ebook_author.ebook_id")
-      .andWhere("category.category_id = ebook_category.category_id")
-      .andWhere("author.author_id :phrase", { phrase })
-      .andWhere("author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
-      .andWhere("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
+      .leftJoinAndSelect("ebook.language_id", "ebook_language")
+      .leftJoinAndSelect("ebook.publisher_id", "publisher")
+      .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_name', 'ebook_category.popular'])
+      .where("ebook.title LIKE CONCAT('%',:phrase,'%')",{phrase})
       .andWhere("ebook.price <= :maxPrice", { maxPrice })
       .andWhere("ebook.price >= :minPrice", { minPrice })
-      .getMany()
+      .getMany();
+    console.log(res);
+    
+      return res;
   }
 }
 

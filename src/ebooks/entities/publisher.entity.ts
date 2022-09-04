@@ -10,16 +10,16 @@ import {
 import { Ebook } from './ebook.entity';
 
 @Entity()
-export class Publisher extends BaseEntity {
+export class Publisher{
   @PrimaryGeneratedColumn('uuid')
-  publisherId: string;
+  publisher_id: string;
 
   @Column({
     nullable: false,
     length: 50,
   })
-  publisherName: string
+  publisher_name: string
 
-  @OneToMany(() => Ebook, (entity) => entity.publisherId)
+  @OneToMany(() => Ebook, (entity) => entity.publisher_id)
   ebook: Ebook[]
 }

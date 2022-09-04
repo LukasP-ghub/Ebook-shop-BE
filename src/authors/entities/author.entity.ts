@@ -7,13 +7,13 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Author extends BaseEntity {
+export class Author {
   @PrimaryGeneratedColumn('uuid')
-  authorId: string;
+  author_id: string;
 
   @Column({
     nullable: false,
     length: 100,
   })
-  authorName: string;
+  author_name: string;
 }

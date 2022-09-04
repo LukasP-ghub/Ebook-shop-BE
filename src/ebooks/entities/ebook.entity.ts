@@ -19,7 +19,7 @@ import { Publisher } from './publisher.entity';
 @Entity()
 export class Ebook {
   @PrimaryGeneratedColumn('uuid')
-  ebookId: string;
+  ebook_id: string;
 
   @Column({
     nullable: false,
@@ -52,23 +52,23 @@ export class Ebook {
   price: number;
 
   @ManyToOne(() => EbookLanguage, (entity) => entity.ebook)
-  @JoinColumn({ name: 'languageId' })
-  languageId: EbookLanguage;
+  @JoinColumn({ name: 'language_id' })
+  language_id: EbookLanguage;
 
   @ManyToOne(() => Publisher, (entity) => entity.ebook)
-  @JoinColumn({ name: 'publisherId' })
-  publisherId: Publisher;
+  @JoinColumn({ name: 'publisher_id' })
+  publisher_id: Publisher;
 
   @ManyToMany(() => Author)
   @JoinTable({
     name: 'ebook_author',
     joinColumn: {
-      name: "ebookId",
-      referencedColumnName: "ebookId"
+      name: "ebook_id",
+      referencedColumnName: "ebook_id"
     },
     inverseJoinColumn: {
-      name: "authorId",
-      referencedColumnName: "authorId"
+      name: "author_id",
+      referencedColumnName: "author_id"
     }
   })
   author: Author[];
@@ -77,12 +77,12 @@ export class Ebook {
   @JoinTable({
     name: 'ebook_category',
     joinColumn: {
-      name: "ebookId",
-      referencedColumnName: "ebookId"
+      name: "ebook_id",
+      referencedColumnName: "ebook_id"
     },
     inverseJoinColumn: {
-      name: "categoryId",
-      referencedColumnName: "categoryId"
+      name: "category_id",
+      referencedColumnName: "category_id"
     }
   })
   category: Category[];
@@ -91,12 +91,12 @@ export class Ebook {
   @JoinTable({
     name: 'ebook_discount',
     joinColumn: {
-      name: "ebookId",
-      referencedColumnName: "ebookId"
+      name: "ebook_id",
+      referencedColumnName: "ebook_id"
     },
     inverseJoinColumn: {
-      name: "discountId",
-      referencedColumnName: "discountId"
+      name: "discount_id",
+      referencedColumnName: "discount_id"
     }
   })
   discount: Discount[];

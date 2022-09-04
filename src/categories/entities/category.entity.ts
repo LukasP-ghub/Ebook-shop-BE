@@ -7,15 +7,15 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Category extends BaseEntity {
+export class Category {
   @PrimaryGeneratedColumn('uuid')
-  categoryId: string;
+  category_id: string;
 
   @Column({
     nullable: false,
     length: 30,
   })
-  categoryName: string;
+  category_name: string;
 
   @Column({
     type: 'boolean'

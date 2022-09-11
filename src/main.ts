@@ -12,7 +12,7 @@ async function bootstrap() {
     origin: 'http://localhost:3000',
     credentials: true,
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser(COOKIE_SECRET));
   await app.listen(3001);
 }

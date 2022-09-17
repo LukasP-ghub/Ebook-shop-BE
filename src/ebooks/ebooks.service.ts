@@ -53,6 +53,10 @@ export class EbooksService {
             qb.where("ebook_author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
             break;
 
+          case EbookDBSearchKey.ebook_category:
+            qb.where("ebook_category.category_name = :phrase", { phrase })
+            break;
+
           default:
             qb.where("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
             break;

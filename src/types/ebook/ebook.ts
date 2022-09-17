@@ -13,6 +13,7 @@ export enum EbookDBSearchKey {
     title = 'title',
     author_id = 'author_id',
     author_name = 'author_name',
+    ebook_category = 'ebook_category',
 }
 
 export interface EbookDBSearchOptions {

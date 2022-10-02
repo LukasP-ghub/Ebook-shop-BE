@@ -8,6 +8,8 @@ import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { DataSource } from 'typeorm';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,7 +17,9 @@ import { DataSource } from 'typeorm';
     EbooksModule,
     AuthorsModule,
     CategoriesModule,
-    DiscountsModule],
+    DiscountsModule,
+    UserModule,
+    AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

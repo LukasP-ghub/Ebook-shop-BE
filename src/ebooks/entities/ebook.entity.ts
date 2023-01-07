@@ -51,6 +51,12 @@ export class Ebook {
   })
   price: number;
 
+  @Column({
+    default: null,
+    nullable: true,
+  })
+  cover: string;
+
   @ManyToOne(() => EbookLanguage, (entity) => entity.ebook)
   @JoinColumn({ name: 'language_id' })
   language_id: EbookLanguage;
@@ -100,5 +106,6 @@ export class Ebook {
     }
   })
   discount: Discount[];
+
 
 }

@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { EbooksService } from './ebooks.service';
-import { CreateEbookDto } from './dto/create-ebook.dto';
+import { AddEbookDto } from './dto/add-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
-import { EbookDBSearchKey } from '../types';
+import { EbookDBSearchKey, MulterDiskUploadedFiles } from '../types';
 import { FilterEbookDto } from './dto/filter-ebook.dto';
+import { Ebook } from './entities/ebook.entity';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerStorage, storageDir } from '../utils/storage';
+import * as path from 'path';
 
 @Controller('ebooks')
 export class EbooksController {
@@ -31,6 +35,14 @@ export class EbooksController {
     return await this.ebooksService.getMany(query);
   }
 
+  @Get('/photo/:id')
+  async getPhoto(
+    @Param('id') id: string,
+    @Res() res: any
+  ): Promise<any> {
+    return await this.ebooksService.getPhoto(id, res);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEbookDto: UpdateEbookDto) {
     return this.ebooksService.update(+id, updateEbookDto);
@@ -40,4 +52,21 @@ export class EbooksController {
   remove(@Param('id') id: string) {
     return this.ebooksService.remove(+id);
   }
+
+  @Post('/')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'cover', maxCount: 10,
+      },
+    ], { storage: multerStorage(path.join(storageDir(), 'product-photos')) },
+    ),
+  )
+  addEbook(
+    @Body() req: AddEbookDto,
+    @UploadedFiles() files: MulterDiskUploadedFiles,
+  ): Promise<string> {
+    return this.ebooksService.addEbook(req, files);
+  }
+
 }

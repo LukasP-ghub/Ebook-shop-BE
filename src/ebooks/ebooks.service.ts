@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { storageDir } from '../utils/storage';
 import { Brackets, Repository } from 'typeorm';
 import { EbookDBSearchKey } from '../types/ebook/ebook';
-import { CreateEbookDto } from './dto/create-ebook.dto';
+import { AddEbookDto } from './dto/add-ebook.dto';
 import { FilterEbookDto } from './dto/filter-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
 import { Ebook } from './entities/ebook.entity';
+import * as path from 'path';
+import * as fs from 'fs';
+import { MulterDiskUploadedFiles } from '../types';
+import { Author } from '../authors/entities/author.entity';
+import { Category } from '../categories/entities/category.entity';
+import { Discount } from 'src/discounts/entities/discount.entity';
 
 @Injectable()
 export class EbooksService {
@@ -13,10 +20,6 @@ export class EbooksService {
     @InjectRepository(Ebook)
     private ebooksRepository: Repository<Ebook>,
   ) { }
-
-  create(createEbookDto: CreateEbookDto) {
-    return 'This action adds a new ebook';
-  }
 
   findAll() {
     return `This action returns all ebooks`;
@@ -67,6 +70,80 @@ export class EbooksService {
       .getMany();
 
     return res;
+  }
+
+  async getPhoto(ebook_id: string, res: any) {
+    try {
+      const product = await this.ebooksRepository.findOneBy({ ebook_id });
+      if (!product) throw new Error('No object found!');
+      if (!product.cover) throw new Error('No photo in this entity!');
+
+      res.sendFile(
+        product.cover,
+        {
+          root: path.join(storageDir(), ''),
+        },
+      );
+    } catch (e) {
+      res.json({ error: e.message })
+    }
+  }
+
+  async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles): Promise<string> {
+    const photo = files?.photo?.[0] ?? null;
+    try {
+
+      const ebook = new Ebook();
+
+
+      if (photo) {
+        ebook.cover = photo.filename;
+      }
+      const { title, author, category, description, discount, language_id, pages, price, publication_date, publisher_id } = req;
+
+      const authors = author.map(authorName => {
+        const authorEntity = new Author();
+        authorEntity.author_name = authorName;
+        return authorEntity;
+      });
+      const categories = category.map(categoryName => {
+        const categoryEntity = new Category();
+        categoryEntity.category_name = categoryName;
+        return categoryEntity;
+      });
+      const discounts = discount.map(discountId => {
+        const discountEntity = new Discount();
+        discountEntity.category_name = categoryName;
+        return categoryEntity;
+      });
+
+      ebook.title = title;
+      ebook.description = description;
+      ebook.pages = pages;
+      ebook.price = price;
+      ebook.publication_date = publication_date;
+      ebook.publisher_id = publisher_id;
+      ebook.language_id = language_id;
+      ebook.discount = discount;
+
+      console.log(ebook);
+
+
+      await this.ebooksRepository.createQueryBuilder()
+        .relation(Ebook, "author")
+        .relation(Category, "category")
+        .of(ebook)
+        .add(authors, categories);
+
+      return 'Ebook saved';
+    } catch (error) {
+      if (photo) {
+        fs.unlink(path.join(storageDir(), 'book-covers', photo.filename), (err) => {
+          if (err) throw err;
+          console.log(`file ${photo.filename} was deleted`);
+        });
+      }
+    }
   }
 }
 

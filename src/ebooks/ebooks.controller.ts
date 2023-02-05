@@ -34,7 +34,7 @@ export class EbooksController {
   async findMany(@Query() query: FilterEbookDto) {
     console.log(query);
 
-    return await this.ebooksService.getMany(query);
+    return await this.ebooksService.filter(query);
   }
 
   @Get('/photo/:id')

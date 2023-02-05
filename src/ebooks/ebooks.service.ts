@@ -12,7 +12,7 @@ import * as fs from 'fs';
 import { MulterDiskUploadedFiles } from '../types';
 import { Author } from '../authors/entities/author.entity';
 import { Category } from '../categories/entities/category.entity';
-import { Discount } from 'src/discounts/entities/discount.entity';
+import { Discount } from '../discounts/entities/discount.entity';
 
 @Injectable()
 export class EbooksService {
@@ -37,7 +37,9 @@ export class EbooksService {
     return `This action removes a #${id} ebook`;
   }
 
-  async getMany({ key = EbookDBSearchKey.title, phrase = '', maxPrice = 999, minPrice = 0, }: FilterEbookDto): Promise<Ebook[]> {
+  async getMany({ key, phrase, maxPrice, minPrice }: FilterEbookDto): Promise<Ebook[]> {
+    console.log(key, phrase, maxPrice, minPrice);
+
     const res = await this.ebooksRepository
       .createQueryBuilder("ebook")
       .leftJoinAndSelect("ebook.author", "ebook_author")
@@ -45,7 +47,7 @@ export class EbooksService {
       .leftJoinAndSelect("ebook.discount", "ebook_discount")
       .leftJoinAndSelect("ebook.language_id", "ebook_language")
       .leftJoinAndSelect("ebook.publisher_id", "publisher")
-      .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_name', 'ebook_category.popular'])
+      .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_id', 'ebook_category.category_name', 'ebook_category.popular'])
       .where(new Brackets((qb) => {
         switch (key) {
           case EbookDBSearchKey.author_id:
@@ -68,9 +70,45 @@ export class EbooksService {
       .andWhere("ebook.price <= :maxPrice", { maxPrice })
       .andWhere("ebook.price >= :minPrice", { minPrice })
       .getMany();
+    console.log(res);
 
     return res;
   }
+
+  // async getMany({ key = EbookDBSearchKey.title, phrase = '', maxPrice = 999, minPrice = 0, }: FilterEbookDto): Promise<Ebook[]> {
+  //   const res = await this.ebooksRepository
+  //     .createQueryBuilder("ebook")
+  //     .leftJoinAndSelect("ebook.author", "ebook_author")
+  //     .leftJoinAndSelect("ebook.category", "ebook_category")
+  //     .leftJoinAndSelect("ebook.discount", "ebook_discount")
+  //     .leftJoinAndSelect("ebook.language_id", "ebook_language")
+  //     .leftJoinAndSelect("ebook.publisher_id", "publisher")
+  //     .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_name', 'ebook_category.popular'])
+  //     .where(new Brackets((qb) => {
+  //       switch (key) {
+  //         case EbookDBSearchKey.author_id:
+  //           qb.where("ebook_author.author_id = :phrase", { phrase })
+  //           break;
+
+  //         case EbookDBSearchKey.author_name:
+  //           qb.where("ebook_author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
+  //           break;
+
+  //         case EbookDBSearchKey.ebook_category:
+  //           qb.where("ebook_category.category_name = :phrase", { phrase })
+  //           break;
+
+  //         default:
+  //           qb.where("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
+  //           break;
+  //       }
+  //     }))
+  //     .andWhere("ebook.price <= :maxPrice", { maxPrice })
+  //     .andWhere("ebook.price >= :minPrice", { minPrice })
+  //     .getMany();
+
+  //   return res;
+  // }
 
   async getPhoto(ebook_id: string, res: any) {
     try {
@@ -89,6 +127,7 @@ export class EbooksService {
     }
   }
 
+  //@ToDo -> finish: adding to db, create ebook instance
   async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles): Promise<string> {
     const photo = files?.photo?.[0] ?? null;
     try {
@@ -111,20 +150,20 @@ export class EbooksService {
         categoryEntity.category_name = categoryName;
         return categoryEntity;
       });
-      const discounts = discount.map(discountId => {
-        const discountEntity = new Discount();
-        discountEntity.category_name = categoryName;
-        return categoryEntity;
-      });
+      // const discounts = discount.map(discountId => {
+      //   const discountEntity = new Discount();
+      //   discountEntity.discount_value = discount;
+      //   return discountEntity;
+      // });
 
       ebook.title = title;
       ebook.description = description;
       ebook.pages = pages;
       ebook.price = price;
       ebook.publication_date = publication_date;
-      ebook.publisher_id = publisher_id;
-      ebook.language_id = language_id;
-      ebook.discount = discount;
+      // ebook.publisher_id = publisher_id;
+      //ebook.language_id = language_id;
+      //ebook.discount = discount;
 
       console.log(ebook);
 
@@ -133,7 +172,7 @@ export class EbooksService {
         .relation(Ebook, "author")
         .relation(Category, "category")
         .of(ebook)
-        .add(authors, categories);
+        .add(authors);
 
       return 'Ebook saved';
     } catch (error) {

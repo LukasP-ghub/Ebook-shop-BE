@@ -8,6 +8,8 @@ import { Ebook } from './entities/ebook.entity';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerStorage, storageDir } from '../utils/storage';
 import * as path from 'path';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { EbookDto } from './dto/ebook.dto';
 
 @Controller('ebooks')
 export class EbooksController {
@@ -27,7 +29,7 @@ export class EbooksController {
   // async findOne(@Param('id') id: string) {
   //   return await this.ebooksService.findOne(+id);
   // }
-
+  @Serialize(EbookDto)
   @Get('/filter')
   async findMany(@Query() query: FilterEbookDto) {
     console.log(query);

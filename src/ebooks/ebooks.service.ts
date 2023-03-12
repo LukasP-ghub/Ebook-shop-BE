@@ -13,6 +13,9 @@ import { MulterDiskUploadedFiles } from '../types';
 import { Author } from '../authors/entities/author.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Discount } from '../discounts/entities/discount.entity';
+import { EbookLanguage } from './entities/ebook_language.entity';
+import { classToPlain, instanceToInstance, instanceToPlain, plainToClass, plainToInstance } from 'class-transformer';
+import { EbookLanguageDto } from './dto/ebook-language.dto';
 
 @Injectable()
 export class EbooksService {
@@ -29,8 +32,102 @@ export class EbooksService {
     return `This action returns a #${id} ebook`;
   }
 
-  update(id: number, updateEbookDto: UpdateEbookDto) {
-    return `This action updates a #${id} ebook`;
+  async update(ebook_id: string, upEbookData: UpdateEbookDto, files: MulterDiskUploadedFiles) {
+    const photo = files?.cover?.[0] ?? null;
+
+    try {
+      const currEbook = await this.ebooksRepository.findOne({
+        where: { ebook_id },
+        relations: {
+          language: true,
+          publisher: true,
+          author: true,
+          category: true,
+          discount: true,
+          cover: true,
+        }
+      });
+
+      if (!currEbook) return 'Record not found';
+      console.log(upEbookData);
+
+      for (const prop in upEbookData) {
+        if (typeof upEbookData[prop] !== 'object' && typeof upEbookData[prop] !== 'function') {
+          currEbook[prop] = upEbookData[prop];
+        }
+      }
+
+      if (upEbookData?.author) {
+        upEbookData.author.forEach(newElem => {
+          const currAuthor = currEbook.author.find(currElem => currElem.author_id && currElem.author_id === newElem?.author_id);
+
+          if (currAuthor) {
+            for (const prop in newElem) {
+              currAuthor[prop] = newElem[prop];
+            }
+          } else {
+            const newAuthor = new Author();
+            for (const prop in newElem) {
+              newAuthor[prop] = newElem[prop];
+            }
+            currEbook.author.push(newAuthor);
+          }
+        })
+      }
+
+      if (upEbookData?.category) {
+        upEbookData.category.forEach(newElem => {
+          const currCategory = currEbook.category.find(currElem => currElem.category_id === newElem?.category_id);
+          if (currCategory) {
+            for (const prop in newElem) {
+              currCategory[prop] = newElem[prop];
+            }
+          } else {
+            const newCategory = new Category();
+            for (const prop in newElem) {
+              newCategory[prop] = newElem[prop];
+            }
+            currEbook.category.push(newCategory);
+          }
+        })
+      }
+
+      if (upEbookData?.discount) {
+        upEbookData.discount.forEach(newElem => {
+          const currDiscount = currEbook.discount.find(currElem => currElem.discount_id === newElem?.discount_id);
+          if (currDiscount) {
+            for (const prop in newElem) {
+              currDiscount[prop] = newElem[prop];
+            }
+          } else {
+            const newDiscount = new Discount();
+            for (const prop in newElem) {
+              newDiscount[prop] = newElem[prop];
+            }
+            currEbook.discount.push(newDiscount);
+          }
+        })
+      }
+
+
+      //const res = await this.ebooksRepository.save(currEbook);
+
+      return currEbook;
+
+    }
+    catch (error) {
+      try {
+        if (photo) {
+          fs.unlink(path.join(storageDir(), 'book-covers', photo.filename), (err) => {
+            if (err) throw err;
+            console.log(`file ${photo.filename} was deleted`);
+          });
+        }
+      } catch (error2) {
+        throw error2
+      }
+
+    }
   }
 
   remove(id: number) {
@@ -45,8 +142,8 @@ export class EbooksService {
       .leftJoinAndSelect("ebook.author", "ebook_author")
       .leftJoinAndSelect("ebook.category", "ebook_category")
       .leftJoinAndSelect("ebook.discount", "ebook_discount")
-      .leftJoinAndSelect("ebook.language_id", "ebook_language")
-      .leftJoinAndSelect("ebook.publisher_id", "publisher")
+      .leftJoinAndSelect("ebook.language", "ebook_language")
+      .leftJoinAndSelect("ebook.publisher", "publisher")
       .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_id', 'ebook_category.category_name', 'ebook_category.popular'])
       .where(new Brackets((qb) => {
         switch (key) {
@@ -101,43 +198,37 @@ export class EbooksService {
 
 
       if (photo) {
-        ebook.cover = photo.filename;
+        // ebook.cover = photo.filename;
       }
-      const { title, author, category, description, discount, language_id, pages, price, publication_date, publisher_id } = req;
+      // const { title, author, category, description, discount, pages, price, publication_date, publisher } = req;
 
-      const authors = author.map(authorName => {
-        const authorEntity = new Author();
-        authorEntity.author_name = authorName;
-        return authorEntity;
-      });
-      const categories = category.map(categoryName => {
-        const categoryEntity = new Category();
-        categoryEntity.category_name = categoryName;
-        return categoryEntity;
-      });
-      // const discounts = discount.map(discountId => {
-      //   const discountEntity = new Discount();
-      //   discountEntity.discount_value = discount;
-      //   return discountEntity;
+      // const authors = author.map(authorName => {
+      //   //const authorEntity = new Author();
+      //   const authorEntity = authorName;
+      //   //authorEntity.author_name = authorName;
+      //   return authorEntity;
       // });
+      // const categories = category.map(categoryName => {
+      //   const categoryEntity = new Category();
+      //   // categoryEntity.category_name = categoryName;
+      //   return categoryEntity;
+      // });
+      // // const discounts = discount.map(discountId => {
+      // //   const discountEntity = new Discount();
+      // //   discountEntity.discount_value = discount;
+      // //   return discountEntity;
+      // // });
 
-      ebook.title = title;
-      ebook.description = description;
-      ebook.pages = pages;
-      ebook.price = price;
-      ebook.publication_date = publication_date;
-      // ebook.publisher_id = publisher_id;
-      //ebook.language_id = language_id;
-      //ebook.discount = discount;
 
       console.log(ebook);
+      console.log(files);
 
 
-      await this.ebooksRepository.createQueryBuilder()
-        .relation(Ebook, "author")
-        .relation(Category, "category")
-        .of(ebook)
-        .add(authors);
+      // await this.ebooksRepository.createQueryBuilder()
+      //   .relation(Ebook, "author")
+      //   .relation(Category, "category")
+      //   .of(ebook)
+      //   .add(authors);
 
       return 'Ebook saved';
     } catch (error) {
@@ -149,4 +240,5 @@ export class EbooksService {
       }
     }
   }
+
 }

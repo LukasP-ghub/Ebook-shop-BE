@@ -13,6 +13,7 @@ import {
 import { Author } from '../../authors/entities/author.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Discount } from '../../discounts/entities/discount.entity';
+import { Cover } from './cover.entity';
 import { EbookLanguage } from './ebook_language.entity';
 import { Publisher } from './publisher.entity';
 
@@ -51,19 +52,16 @@ export class Ebook {
   })
   price: number;
 
-  @Column({
-    default: null,
-    nullable: true,
-  })
-  cover: string;
-
   @ManyToOne(() => EbookLanguage, (entity) => entity.ebook)
-  @JoinColumn({ name: 'language_id' })
-  language_id: EbookLanguage;
+  @JoinColumn({ name: 'language' })
+  language: EbookLanguage;
 
   @ManyToOne(() => Publisher, (entity) => entity.ebook)
-  @JoinColumn({ name: 'publisher_id' })
-  publisher_id: Publisher;
+  @JoinColumn({ name: 'publisher' })
+  publisher: Publisher;
+
+  @OneToMany(() => Cover, (entity) => entity.ebook_id)
+  cover: Cover[];
 
   @ManyToMany(() => Author)
   @JoinTable({

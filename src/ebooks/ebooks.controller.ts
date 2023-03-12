@@ -45,9 +45,21 @@ export class EbooksController {
     return await this.ebooksService.getPhoto(id, res);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEbookDto: UpdateEbookDto) {
-    return this.ebooksService.update(+id, updateEbookDto);
+  @Patch('/update/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'cover', maxCount: 10,
+      },
+    ], { storage: multerStorage(path.join(storageDir(), 'book-covers')) },
+    ),
+  )
+  update(
+    @Param('id') id: string,
+    @Body() updateEbookDto: UpdateEbookDto,
+    @UploadedFiles() files: MulterDiskUploadedFiles,
+  ) {
+    return this.ebooksService.update(id, updateEbookDto, files);
   }
 
   @Delete(':id')
@@ -61,7 +73,7 @@ export class EbooksController {
       {
         name: 'cover', maxCount: 10,
       },
-    ], { storage: multerStorage(path.join(storageDir(), 'product-photos')) },
+    ], { storage: multerStorage(path.join(storageDir(), 'book-covers')) },
     ),
   )
   addEbook(

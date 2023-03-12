@@ -1,3 +1,4 @@
+import { IsUUID } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -10,7 +11,7 @@ import {
 import { Ebook } from './ebook.entity';
 
 @Entity()
-export class Publisher{
+export class Publisher {
   @PrimaryGeneratedColumn('uuid')
   publisher_id: string;
 
@@ -20,6 +21,6 @@ export class Publisher{
   })
   publisher_name: string
 
-  @OneToMany(() => Ebook, (entity) => entity.publisher_id)
+  @OneToMany(() => Ebook, (entity) => entity.publisher)
   ebook: Ebook[]
 }

@@ -4,6 +4,7 @@ import { AuthorDto } from "../../authors/dto/author.dto";
 import { EbookLanguageDto } from "./ebook-language.dto";
 import { PublisherDto } from "./publisher.dto";
 import { DiscountDto } from "../../discounts/dto/discount.dto";
+import { CoverDto } from "./cover.dto";
 
 @Exclude()
 export class EbookDto {
@@ -26,19 +27,19 @@ export class EbookDto {
   price: number;
 
   @Expose()
-  cover: string;
+  @Type(() => CoverDto)
+  cover: CoverDto;
 
   @Expose()
   @Type(() => EbookLanguageDto)
-  language_id: EbookLanguageDto;
+  language: EbookLanguageDto;
 
   @Expose()
   @Type(() => PublisherDto)
-  publisher_id: PublisherDto;
+  publisher: PublisherDto;
 
   @Expose()
   @Type(() => AuthorDto)
-  //@Transform(({ value }) => value.map((item) => item.author_name))
   author: AuthorDto[];
 
   @Expose()
@@ -49,5 +50,3 @@ export class EbookDto {
   @Type(() => DiscountDto)
   discount: DiscountDto[];
 }
-
-//@Transform(({ obj }) => obj.language_name)

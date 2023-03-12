@@ -1,10 +1,10 @@
 import * as path from 'path';
-import {diskStorage} from 'multer';
-import * as mime from 'mime';
-import {v4 as uuid} from 'uuid';
+import { diskStorage } from 'multer';
+import * as mime from 'mime-types';
+import { v4 as uuid } from 'uuid';
 
 export function storageDir() {
-    return path.join(__dirname, '../../storage');
+    return path.join(__dirname, '../../src/assets/images');
 }
 
 export function multerStorage(dest: string) {

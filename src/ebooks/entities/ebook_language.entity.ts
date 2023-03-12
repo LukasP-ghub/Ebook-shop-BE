@@ -1,3 +1,4 @@
+import { IsOptional, IsUUID } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -26,6 +27,7 @@ export class EbookLanguage {
   })
   language_code: string;
 
-  @OneToMany(() => Ebook, (entity) => entity.language_id)
-  ebook: Ebook[]
+  @IsOptional()
+  @OneToMany(() => Ebook, (entity) => entity.language)
+  ebook?: Ebook[]
 }

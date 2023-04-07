@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,) { }
+    private userRepository: Repository<User>) { }
 
   filterUserData(user: User): RegisterUserResponse {
     const { email, user_id } = user;
@@ -24,27 +24,11 @@ export class UserService {
     user.email = newUser.email;
     user.pwdHash = hashPwd(newUser.pwd);
 
-
+    //@Todo save
     return this.filterUserData(user);
   }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async getOneUser(user_id: string): Promise<User> {
+    return await this.userRepository.findOneBy({ user_id });
   }
 }

@@ -10,6 +10,6 @@ export function storageDir() {
 export function multerStorage(dest: string) {
     return diskStorage({
         destination: (req, file, cb) => cb(null, dest),
-        filename: (req, file, cb) => cb(null, `${uuid()}.${(mime as any).extensions[file.mimetype]}`),
+        filename: (req, file, cb) => cb(null, `${uuid()}${path.extname(file.originalname)}`),
     });
 }

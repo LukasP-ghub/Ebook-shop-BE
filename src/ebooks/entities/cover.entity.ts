@@ -16,13 +16,10 @@ export class Cover {
     nullable: false,
     length: 50,
   })
-  photo_name: string;
+  cover_name: string;
 
-  @Column({
-    nullable: false,
-    length: 255,
-  })
-  photo_url: string;
+  @Column()
+  cover_size: number;
 
   @ManyToOne(() => Ebook, (entity) => entity.cover)
   @JoinColumn({ name: 'ebook_id' })

@@ -1,15 +1,18 @@
 import { Expose } from "class-transformer";
-import { IsUUID } from "class-validator";
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
 
 export class EbookLanguageDto {
   @Expose()
+  @IsOptional()
   @IsUUID()
   language_id: string;
 
   @Expose()
+  @IsString()
   language_name: string
 
   @Expose()
+  @IsString()
   language_code: string;
 }

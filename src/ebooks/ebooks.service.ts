@@ -15,7 +15,10 @@ import { Category } from '../categories/entities/category.entity';
 import { Discount } from '../discounts/entities/discount.entity';
 import { EbookLanguage } from './entities/ebook_language.entity';
 import { classToPlain, instanceToInstance, instanceToPlain, plainToClass, plainToInstance } from 'class-transformer';
-import { EbookLanguageDto } from './dto/ebook-language.dto';
+import { EbookLanguageDto } from './dto/ebook_language.dto';
+import { Cover } from './entities/cover.entity';
+import { v4 as uuid } from 'uuid';
+import { Publisher } from './entities/publisher.entity';
 
 @Injectable()
 export class EbooksService {
@@ -24,16 +27,9 @@ export class EbooksService {
     private ebooksRepository: Repository<Ebook>,
   ) { }
 
-  findAll() {
-    return `This action returns all ebooks`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} ebook`;
-  }
-
   async update(ebook_id: string, upEbookData: UpdateEbookDto, files: MulterDiskUploadedFiles) {
-    const photo = files?.cover?.[0] ?? null;
+    const photo = files?.cover ?? [];
+    console.log(upEbookData);
 
     try {
       const currEbook = await this.ebooksRepository.findOne({
@@ -49,13 +45,13 @@ export class EbooksService {
       });
 
       if (!currEbook) return 'Record not found';
-      console.log(upEbookData);
 
       for (const prop in upEbookData) {
         if (typeof upEbookData[prop] !== 'object' && typeof upEbookData[prop] !== 'function') {
           currEbook[prop] = upEbookData[prop];
         }
       }
+
 
       if (upEbookData?.author) {
         upEbookData.author.forEach(newElem => {
@@ -77,7 +73,7 @@ export class EbooksService {
 
       if (upEbookData?.category) {
         upEbookData.category.forEach(newElem => {
-          const currCategory = currEbook.category.find(currElem => currElem.category_id === newElem?.category_id);
+          const currCategory = currEbook.category.find(currElem => currElem.category_id && currElem.category_id === newElem?.category_id);
           if (currCategory) {
             for (const prop in newElem) {
               currCategory[prop] = newElem[prop];
@@ -94,7 +90,7 @@ export class EbooksService {
 
       if (upEbookData?.discount) {
         upEbookData.discount.forEach(newElem => {
-          const currDiscount = currEbook.discount.find(currElem => currElem.discount_id === newElem?.discount_id);
+          const currDiscount = currEbook.discount.find(currElem => currElem.discount_id && currElem.discount_id === newElem?.discount_id);
           if (currDiscount) {
             for (const prop in newElem) {
               currDiscount[prop] = newElem[prop];
@@ -109,7 +105,15 @@ export class EbooksService {
         })
       }
 
-
+      if (photo.length) {
+        photo.forEach(newElem => {
+          const newPhoto = new Cover();
+          newPhoto.cover_id = newElem.filename;
+          newPhoto.cover_name = newElem.originalname;
+          newPhoto.cover_size = newElem.size;
+          currEbook.cover.push(newPhoto);
+        })
+      }
       //const res = await this.ebooksRepository.save(currEbook);
 
       return currEbook;
@@ -118,10 +122,13 @@ export class EbooksService {
     catch (error) {
       try {
         if (photo) {
-          fs.unlink(path.join(storageDir(), 'book-covers', photo.filename), (err) => {
-            if (err) throw err;
-            console.log(`file ${photo.filename} was deleted`);
-          });
+          photo.forEach((item) => {
+            fs.unlink(path.join(storageDir(), 'book-covers', item.filename), (err) => {
+              if (err) throw err;
+              console.log(`file ${item.filename} was deleted`);
+            });
+          })
+
         }
       } catch (error2) {
         throw error2
@@ -181,7 +188,7 @@ export class EbooksService {
       res.sendFile(
         product.cover,
         {
-          root: path.join(storageDir(), ''),
+          root: path.join(storageDir(), 'book-covers'),
         },
       );
     } catch (e) {
@@ -189,55 +196,44 @@ export class EbooksService {
     }
   }
 
-  //@ToDo -> finish: adding to db, create ebook instance
-  async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles): Promise<string> {
-    const photo = files?.photo?.[0] ?? null;
+
+  async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles) {
+    const photo = files?.cover ?? [];
+
     try {
+      const ebook = this.ebooksRepository.create(req);
 
-      const ebook = new Ebook();
-
-
-      if (photo) {
-        // ebook.cover = photo.filename;
+      if (photo.length) {
+        ebook.cover = [];
+        photo.forEach(newElem => {
+          const newPhoto = new Cover();
+          newPhoto.cover_id = newElem.filename;
+          newPhoto.cover_name = newElem.originalname;
+          newPhoto.cover_size = newElem.size;
+          ebook.cover.push(newPhoto);
+        })
       }
-      // const { title, author, category, description, discount, pages, price, publication_date, publisher } = req;
-
-      // const authors = author.map(authorName => {
-      //   //const authorEntity = new Author();
-      //   const authorEntity = authorName;
-      //   //authorEntity.author_name = authorName;
-      //   return authorEntity;
-      // });
-      // const categories = category.map(categoryName => {
-      //   const categoryEntity = new Category();
-      //   // categoryEntity.category_name = categoryName;
-      //   return categoryEntity;
-      // });
-      // // const discounts = discount.map(discountId => {
-      // //   const discountEntity = new Discount();
-      // //   discountEntity.discount_value = discount;
-      // //   return discountEntity;
-      // // });
-
 
       console.log(ebook);
-      console.log(files);
 
-
-      // await this.ebooksRepository.createQueryBuilder()
-      //   .relation(Ebook, "author")
-      //   .relation(Category, "category")
-      //   .of(ebook)
-      //   .add(authors);
+      //const res = await this.ebooksRepository.save(ebook);
 
       return 'Ebook saved';
     } catch (error) {
-      if (photo) {
-        fs.unlink(path.join(storageDir(), 'book-covers', photo.filename), (err) => {
-          if (err) throw err;
-          console.log(`file ${photo.filename} was deleted`);
-        });
+      try {
+        if (photo) {
+          photo.forEach((item) => {
+            fs.unlink(path.join(storageDir(), 'book-covers', item.filename), (err) => {
+              if (err) throw err;
+              console.log(`file ${item.filename} was deleted`);
+            });
+          })
+
+        }
+      } catch (error2) {
+        throw error2
       }
+
     }
   }
 

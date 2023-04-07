@@ -12,13 +12,10 @@ async function bootstrap() {
     origin: 'http://localhost:3000',
     credentials: true,
   });
+
   app.useGlobalPipes(new ValidationPipe({
-    skipMissingProperties: true,
-    //whitelist: true,
-    //forbidNonWhitelisted: true,
-    //forbidUnknownValues: true,
-    skipUndefinedProperties: true,
-    skipNullProperties: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
     transform: true,
     transformOptions: {
       enableImplicitConversion: true,

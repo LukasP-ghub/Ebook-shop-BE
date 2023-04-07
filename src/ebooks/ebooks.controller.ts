@@ -67,7 +67,7 @@ export class EbooksController {
     return this.ebooksService.remove(+id);
   }
 
-  @Post('/')
+  @Post('/add/ebook')
   @UseInterceptors(
     FileFieldsInterceptor([
       {
@@ -79,7 +79,7 @@ export class EbooksController {
   addEbook(
     @Body() req: AddEbookDto,
     @UploadedFiles() files: MulterDiskUploadedFiles,
-  ): Promise<string> {
+  ) {
     return this.ebooksService.addEbook(req, files);
   }
 

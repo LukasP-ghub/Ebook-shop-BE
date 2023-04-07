@@ -1,17 +1,18 @@
 import { Expose } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 
 
 export class CoverDto {
   @Expose()
   @IsOptional()
+  @IsUUID()
   cover_id: string;
 
   @Expose()
   @IsString()
-  photo_name: string;
+  cover_name: string;
 
   @Expose()
-  @IsString()
-  photo_url: string;
+  @IsNumber({ maxDecimalPlaces: 0, allowNaN: false })
+  cover_size: number;
 }

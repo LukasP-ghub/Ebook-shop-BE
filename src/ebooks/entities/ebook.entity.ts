@@ -52,18 +52,18 @@ export class Ebook {
   })
   price: number;
 
-  @ManyToOne(() => EbookLanguage, (entity) => entity.ebook)
+  @ManyToOne(() => EbookLanguage, (entity) => entity.ebook, { cascade: true })
   @JoinColumn({ name: 'language' })
   language: EbookLanguage;
 
-  @ManyToOne(() => Publisher, (entity) => entity.ebook)
+  @ManyToOne(() => Publisher, (entity) => entity.ebook, { cascade: true })
   @JoinColumn({ name: 'publisher' })
   publisher: Publisher;
 
-  @OneToMany(() => Cover, (entity) => entity.ebook_id)
+  @OneToMany(() => Cover, (entity) => entity.ebook_id, { cascade: true })
   cover: Cover[];
 
-  @ManyToMany(() => Author)
+  @ManyToMany(() => Author, { cascade: true })
   @JoinTable({
     name: 'ebook_author',
     joinColumn: {
@@ -77,7 +77,7 @@ export class Ebook {
   })
   author: Author[];
 
-  @ManyToMany(() => Category)
+  @ManyToMany(() => Category, { cascade: true })
   @JoinTable({
     name: 'ebook_category',
     joinColumn: {
@@ -91,7 +91,7 @@ export class Ebook {
   })
   category: Category[];
 
-  @ManyToMany(() => Discount)
+  @ManyToMany(() => Discount, { cascade: true })
   @JoinTable({
     name: 'ebook_discount',
     joinColumn: {

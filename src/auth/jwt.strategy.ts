@@ -1,29 +1,30 @@
 import { Strategy } from "passport-jwt";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { User } from "../user/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-
 
 export interface JwtPayload {
   id: string
 }
 
 function cookieExtractor(reg: any): null | string {
-  return (reg && reg.cookies) ? (reg.cookies?.NAZWA_CIASTKA ?? null) : null;
+  return (reg && reg.cookies) ? (reg.cookies?.jwt ?? null) : null;
 }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>) {
+    private userRepository: Repository<User>,
+  ) {
     super({
       jwtFromRequest: cookieExtractor,
       secretOrKey: 'JDwoi doi o#OOI F#3fOAoJF*#fooiN hf3OIC OJ o jf#OJCOjoJFo#CO#CoqCMoc#OCMOIDoij oCOMowCOcO#OI3J*#*#*#* FfjCNoo@w*&$08@*&@)*#)(C p9',
-    })
+    });
   }
+
 
   async validate(payload: JwtPayload, done: (error, user) => void) {
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
 import { EbooksService } from './ebooks.service';
 import { AddEbookDto } from './dto/add-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
@@ -10,6 +10,9 @@ import { multerStorage, storageDir } from '../utils/storage';
 import * as path from 'path';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { EbookDto } from './dto/ebook.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @Controller('ebooks')
 export class EbooksController {
@@ -46,6 +49,8 @@ export class EbooksController {
   }
 
   @Patch('/update/:id')
+  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       {
@@ -62,12 +67,18 @@ export class EbooksController {
     return this.ebooksService.update(id, updateEbookDto, files);
   }
 
+
   @Delete(':id')
+  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
-    return this.ebooksService.remove(+id);
+    return 'delete done';
+    //return this.ebooksService.remove(+id);
   }
 
   @Post('/add/ebook')
+  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       {

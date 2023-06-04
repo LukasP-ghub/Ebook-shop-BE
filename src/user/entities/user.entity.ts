@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+@Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   user_id: string;
@@ -21,6 +22,9 @@ export class User {
 
   @Column()
   pwdHash: string;
+
+  @Column()
+  role: string;
 
   @Column({
     nullable: true,

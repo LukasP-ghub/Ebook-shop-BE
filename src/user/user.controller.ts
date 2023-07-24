@@ -5,6 +5,8 @@ import { RegisterDto } from './dto/register.dto';
 import { Roles } from '../decorators/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../guards/roles.guard';
+import { User } from './entities/user.entity';
+import { UserObj } from '../decorators/user-obj.decorator';
 
 @Controller('user')
 export class UserController {
@@ -32,14 +34,16 @@ export class UserController {
   @Patch('/update')
   @Roles('user')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  update(@Body() updateUserDto: UpdateUserDto) {
-    // return this.userService.update(+id, updateUserDto);
+  update(
+    @Body() updateUserDto: UpdateUserDto,
+    @UserObj() user: User) {
+    return this.userService.update(user, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('/remove')
   @Roles('user')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  remove(@Param('id') id: string) {
-    // return this.userService.remove(+id);
+  remove(@UserObj() user: User) {
+    return this.userService.remove(user);
   }
 }

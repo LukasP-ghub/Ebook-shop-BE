@@ -6,7 +6,7 @@ export const TYPEORM_CONFIG: TypeOrmModuleOptions = {
   port: 3306,
   username: 'root',
   password: '',
-  database: 'wobclone',
+  database: process.env.NODE_ENV === 'test' ? 'wobclone_test' : 'wobclone',
   entities: ['dist/**/**.entity{.ts,.js}'],
   bigNumberStrings: false,
   logging: true,

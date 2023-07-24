@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hashPwd } from '../utils/hash-pwd';
 import { RegisterUserResponse } from '../types/user';
-import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -21,8 +20,6 @@ export class UserService {
   }
 
   async register(newUser: RegisterDto): Promise<RegisterUserResponse> {
-    console.log(newUser);
-
     const user = new User();
     user.email = newUser.email;
     user.pwdHash = hashPwd(newUser.pwd);
@@ -35,5 +32,17 @@ export class UserService {
 
   async getOneUser(user_id: string): Promise<User> {
     return await this.userRepository.findOneBy({ user_id });
+  }
+
+
+  async update(user: User, userData: UpdateUserDto) {
+    if (userData?.pwdHash) userData.pwdHash = hashPwd(userData.pwdHash);
+    await this.userRepository.update(user.user_id, userData);
+    return 'updated';
+  }
+
+  async remove(user: User) {
+    await this.userRepository.remove(user);
+    return 'user removed';
   }
 }

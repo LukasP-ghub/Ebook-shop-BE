@@ -1,29 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import * as cookieParser from 'cookie-parser';
-import { COOKIE_SECRET } from './config/secrets';
+import { setupApp } from './setup-app';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    allowedHeaders: ['content-type'],
-    origin: 'http://localhost:3000',
-    credentials: true,
-  });
-
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    transformOptions: {
-      enableImplicitConversion: true,
-      excludeExtraneousValues: true,
-      exposeUnsetFields: false,
-    }
-  }));
-  app.use(cookieParser(COOKIE_SECRET));
+  setupApp(app);
   await app.listen(3001);
 }
 bootstrap();

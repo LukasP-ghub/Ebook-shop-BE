@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles, UseGuards, UseFilters } from '@nestjs/common';
 import { EbooksService } from './ebooks.service';
 import { AddEbookDto } from './dto/add-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
-import { EbookDBSearchKey, MulterDiskUploadedFiles } from '../types';
+import { MulterDiskUploadedFiles } from '../types';
 import { FilterEbookDto } from './dto/filter-ebook.dto';
 import { Ebook } from './entities/ebook.entity';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -13,30 +13,16 @@ import { EbookDto } from './dto/ebook.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+import { DeleteFileOnErrorFilter } from '../filters/deleteFileOnError.filter';
+
 
 @Controller('ebooks')
 export class EbooksController {
   constructor(private readonly ebooksService: EbooksService) { }
 
-  // @Post()
-  // create(@Body() createEbookDto: CreateEbookDto) {
-  //   return this.ebooksService.create(createEbookDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.ebooksService.findAll();
-  // }
-
-  // @Get(':id')
-  // async findOne(@Param('id') id: string) {
-  //   return await this.ebooksService.findOne(+id);
-  // }
   @Serialize(EbookDto)
   @Get('/filter')
   async findMany(@Query() query: FilterEbookDto) {
-    console.log(query);
-
     return await this.ebooksService.filter(query);
   }
 
@@ -85,8 +71,9 @@ export class EbooksController {
         name: 'cover', maxCount: 10,
       },
     ], { storage: multerStorage(path.join(storageDir(), 'book-covers')) },
-    ),
+    )
   )
+  @UseFilters(DeleteFileOnErrorFilter)
   addEbook(
     @Body() req: AddEbookDto,
     @UploadedFiles() files: MulterDiskUploadedFiles,

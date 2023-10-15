@@ -20,10 +20,10 @@ export class User {
   })
   email: string;
 
-  @Column({
-    length: 12,
-  })
-  login: string;
+  // @Column({
+  //   length: 12,
+  // })
+  // login: string;
 
   @Column()
   pwdHash: string;

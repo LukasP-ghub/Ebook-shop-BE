@@ -29,5 +29,5 @@ export class EbookLanguage {
 
   @IsOptional()
   @OneToMany(() => Ebook, (entity) => entity.language)
-  ebook?: Ebook[]
+  ebook: Ebook[]
 }

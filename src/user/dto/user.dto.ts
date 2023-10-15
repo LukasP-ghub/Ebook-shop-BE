@@ -10,12 +10,20 @@ export class UserDto {
   @IsString()
   email: string;
 
-  @Expose()
-  @IsString()
-  login: string;
+  // @Expose()
+  // @IsString()
+  // login: string;
 
   @Expose()
   @IsString()
   pwdHash: string;
+
+  @Expose()
+  @IsString()
+  role: string;
+
+  @Expose()
+  @IsString()
+  currentTokenId: string | null;
 
 }

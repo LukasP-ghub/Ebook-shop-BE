@@ -29,7 +29,6 @@ export class EbooksService {
 
   async update(ebook_id: string, upEbookData: UpdateEbookDto, files: MulterDiskUploadedFiles) {
     const photo = files?.cover ?? [];
-    console.log(upEbookData);
 
     try {
       const currEbook = await this.ebooksRepository.findOne({
@@ -142,7 +141,6 @@ export class EbooksService {
   }
 
   async filter({ key, phrase, maxPrice, minPrice }: FilterEbookDto): Promise<Ebook[]> {
-    console.log(key, phrase, maxPrice, minPrice);
 
     const res = await this.ebooksRepository
       .createQueryBuilder("ebook")
@@ -174,7 +172,6 @@ export class EbooksService {
       .andWhere("ebook.price <= :maxPrice", { maxPrice })
       .andWhere("ebook.price >= :minPrice", { minPrice })
       .getMany();
-    console.log(res);
 
     return res;
   }
@@ -214,11 +211,9 @@ export class EbooksService {
         })
       }
 
-      console.log(ebook);
+      const res = await this.ebooksRepository.save(ebook);
 
-      //const res = await this.ebooksRepository.save(ebook);
-
-      return 'Ebook saved';
+      return res;
     } catch (error) {
       try {
         if (photo) {

@@ -14,6 +14,7 @@ export class Category {
   @Column({
     nullable: false,
     length: 30,
+    unique: true
   })
   category_name: string;
 

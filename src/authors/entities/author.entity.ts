@@ -7,10 +7,6 @@ import { AuthorDto } from '../dto/author.dto';
 
 @Entity()
 export class Author {
-  // constructor(data: AuthorDto) {
-  //   this.init(data);
-  // }
-
   @PrimaryGeneratedColumn('uuid')
   author_id: string;
 
@@ -19,11 +15,4 @@ export class Author {
     length: 100,
   })
   author_name: string;
-
-
-  // private init = (data: AuthorDto) => {
-  //   for (const prop in data) {
-  //     this[prop] = data[prop];
-  //   }
-  // }
 }

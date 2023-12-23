@@ -10,6 +10,7 @@ import { DiscountsModule } from './discounts/discounts.module';
 import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { AuthModule } from './auth/auth.module';
     CategoriesModule,
     DiscountsModule,
     UserModule,
-    AuthModule],
+    AuthModule,
+    OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })

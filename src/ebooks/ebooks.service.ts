@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { storageDir } from '../utils/storage';
 import { Brackets, Repository } from 'typeorm';
@@ -19,28 +19,38 @@ import { EbookLanguageDto } from './dto/ebook_language.dto';
 import { Cover } from './entities/cover.entity';
 import { v4 as uuid } from 'uuid';
 import { Publisher } from './entities/publisher.entity';
+import { AuthorsService } from '../authors/authors.service';
 
 @Injectable()
 export class EbooksService {
   constructor(
+    @Inject(forwardRef(() => AuthorsService)) private authorService: AuthorsService,
     @InjectRepository(Ebook)
     private ebooksRepository: Repository<Ebook>,
   ) { }
 
   async update(ebook_id: string, upEbookData: UpdateEbookDto, files: MulterDiskUploadedFiles) {
     const photo = files?.cover ?? [];
+    const relationsToUpdate = {};
+
+    for (const prop in upEbookData) {
+      if (typeof upEbookData[prop] === 'object' && typeof upEbookData[prop] !== 'function') {
+        relationsToUpdate[prop] = true;
+      }
+    }
 
     try {
       const currEbook = await this.ebooksRepository.findOne({
         where: { ebook_id },
-        relations: {
-          language: true,
-          publisher: true,
-          author: true,
-          category: true,
-          discount: true,
-          cover: true,
-        }
+        // relations: {
+        //   language: true,
+        //   publisher: true,
+        //   author: true,
+        //   category: true,
+        //   discount: true,
+        //   cover: true,
+        // }
+        relations: relationsToUpdate
       });
 
       if (!currEbook) return 'Record not found';
@@ -53,21 +63,22 @@ export class EbooksService {
 
 
       if (upEbookData?.author) {
-        upEbookData.author.forEach(newElem => {
-          const currAuthor = currEbook.author.find(currElem => currElem.author_id && currElem.author_id === newElem?.author_id);
+        //   upEbookData.author.forEach(newElem => {
+        //     const currAuthor = currEbook.author.find(currElem => currElem.author_id && currElem.author_id === newElem?.author_id);
 
-          if (currAuthor) {
-            for (const prop in newElem) {
-              currAuthor[prop] = newElem[prop];
-            }
-          } else {
-            const newAuthor = new Author();
-            for (const prop in newElem) {
-              newAuthor[prop] = newElem[prop];
-            }
-            currEbook.author.push(newAuthor);
-          }
-        })
+        //     if (currAuthor) {
+        //       for (const prop in newElem) {
+        //         currAuthor[prop] = newElem[prop];
+        //       }
+        //     } else {
+        //       const newAuthor = new Author();
+        //       for (const prop in newElem) {
+        //         newAuthor[prop] = newElem[prop];
+        //       }
+        //       currEbook.author.push(newAuthor);
+        //     }
+        //   })
+        currEbook.author = await this.authorService.updateMany(upEbookData.author, { entityOnly: true })
       }
 
       if (upEbookData?.category) {
@@ -212,8 +223,8 @@ export class EbooksService {
       }
 
       const res = await this.ebooksRepository.save(ebook);
-
       return res;
+
     } catch (error) {
       try {
         if (photo) {

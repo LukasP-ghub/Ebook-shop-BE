@@ -20,11 +20,13 @@ import { Cover } from './entities/cover.entity';
 import { v4 as uuid } from 'uuid';
 import { Publisher } from './entities/publisher.entity';
 import { AuthorsService } from '../authors/authors.service';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class EbooksService {
   constructor(
     @Inject(forwardRef(() => AuthorsService)) private authorService: AuthorsService,
+    @Inject(forwardRef(() => CategoriesService)) private categoryService: CategoriesService,
     @InjectRepository(Ebook)
     private ebooksRepository: Repository<Ebook>,
   ) { }
@@ -82,20 +84,21 @@ export class EbooksService {
       }
 
       if (upEbookData?.category) {
-        upEbookData.category.forEach(newElem => {
-          const currCategory = currEbook.category.find(currElem => currElem.category_id && currElem.category_id === newElem?.category_id);
-          if (currCategory) {
-            for (const prop in newElem) {
-              currCategory[prop] = newElem[prop];
-            }
-          } else {
-            const newCategory = new Category();
-            for (const prop in newElem) {
-              newCategory[prop] = newElem[prop];
-            }
-            currEbook.category.push(newCategory);
-          }
-        })
+        // upEbookData.category.forEach(newElem => {
+        //   const currCategory = currEbook.category.find(currElem => currElem.category_id && currElem.category_id === newElem?.category_id);
+        //   if (currCategory) {
+        //     for (const prop in newElem) {
+        //       currCategory[prop] = newElem[prop];
+        //     }
+        //   } else {
+        //     const newCategory = new Category();
+        //     for (const prop in newElem) {
+        //       newCategory[prop] = newElem[prop];
+        //     }
+        //     currEbook.category.push(newCategory);
+        //   }
+        // })
+        currEbook.category = await this.categoryService.updateMany(upEbookData.category, { entityOnly: true })
       }
 
       if (upEbookData?.discount) {

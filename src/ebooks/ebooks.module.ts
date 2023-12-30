@@ -4,10 +4,11 @@ import { EbooksService } from './ebooks.service';
 import { EbooksController } from './ebooks.controller';
 import { Ebook } from './entities/ebook.entity';
 import { AuthorsModule } from '../authors/authors.module';
-import { CategoriesModule } from 'src/categories/categories.module';
+import { CategoriesModule } from '../categories/categories.module';
+import { DiscountsModule } from '../discounts/discounts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ebook]), forwardRef(() => AuthorsModule), forwardRef(() => CategoriesModule)],
+  imports: [TypeOrmModule.forFeature([Ebook]), forwardRef(() => AuthorsModule), forwardRef(() => CategoriesModule), forwardRef(() => DiscountsModule)],
   controllers: [EbooksController],
   providers: [EbooksService]
 })

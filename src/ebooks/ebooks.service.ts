@@ -21,12 +21,14 @@ import { v4 as uuid } from 'uuid';
 import { Publisher } from './entities/publisher.entity';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
+import { DiscountsService } from '../discounts/discounts.service';
 
 @Injectable()
 export class EbooksService {
   constructor(
     @Inject(forwardRef(() => AuthorsService)) private authorService: AuthorsService,
     @Inject(forwardRef(() => CategoriesService)) private categoryService: CategoriesService,
+    @Inject(forwardRef(() => DiscountsService)) private discountService: DiscountsService,
     @InjectRepository(Ebook)
     private ebooksRepository: Repository<Ebook>,
   ) { }
@@ -102,20 +104,21 @@ export class EbooksService {
       }
 
       if (upEbookData?.discount) {
-        upEbookData.discount.forEach(newElem => {
-          const currDiscount = currEbook.discount.find(currElem => currElem.discount_id && currElem.discount_id === newElem?.discount_id);
-          if (currDiscount) {
-            for (const prop in newElem) {
-              currDiscount[prop] = newElem[prop];
-            }
-          } else {
-            const newDiscount = new Discount();
-            for (const prop in newElem) {
-              newDiscount[prop] = newElem[prop];
-            }
-            currEbook.discount.push(newDiscount);
-          }
-        })
+        // upEbookData.discount.forEach(newElem => {
+        //   const currDiscount = currEbook.discount.find(currElem => currElem.discount_id && currElem.discount_id === newElem?.discount_id);
+        //   if (currDiscount) {
+        //     for (const prop in newElem) {
+        //       currDiscount[prop] = newElem[prop];
+        //     }
+        //   } else {
+        //     const newDiscount = new Discount();
+        //     for (const prop in newElem) {
+        //       newDiscount[prop] = newElem[prop];
+        //     }
+        //     currEbook.discount.push(newDiscount);
+        //   }
+        // })
+        currEbook.discount = await this.discountService.updateMany(upEbookData.discount, { entityOnly: true })
       }
 
       if (photo.length) {

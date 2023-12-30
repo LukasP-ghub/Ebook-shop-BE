@@ -35,7 +35,7 @@ export class DiscountsController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   update(@Param('id') id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
-    return this.discountsService.update(+id, updateDiscountDto);
+    return this.discountsService.update(id, updateDiscountDto);
   }
 
   @Delete(':id')

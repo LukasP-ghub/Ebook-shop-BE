@@ -9,6 +9,7 @@ import { DiscountsModule } from '../discounts/discounts.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Ebook]), forwardRef(() => AuthorsModule), forwardRef(() => CategoriesModule), forwardRef(() => DiscountsModule)],
+  exports: [EbooksService],
   controllers: [EbooksController],
   providers: [EbooksService]
 })

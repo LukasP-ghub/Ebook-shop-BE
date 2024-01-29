@@ -1,3 +1,4 @@
+import { Order } from '../../orders/entities/order.entity';
 import {
   BaseEntity,
   Column,
@@ -37,5 +38,6 @@ export class User {
   })
   currentTokenId: string | null;
 
-
+  @OneToMany(() => Order, (entity) => entity.user)
+  order: Order[];
 }

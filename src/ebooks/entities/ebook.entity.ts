@@ -16,6 +16,7 @@ import { Discount } from '../../discounts/entities/discount.entity';
 import { Cover } from './cover.entity';
 import { EbookLanguage } from './ebook_language.entity';
 import { Publisher } from './publisher.entity';
+import { OrderItem } from '../../orders/entities/order_item.entity';
 
 @Entity()
 export class Ebook {
@@ -62,6 +63,9 @@ export class Ebook {
 
   @OneToMany(() => Cover, (entity) => entity.ebook_id, { cascade: true })
   cover: Cover[];
+
+  @OneToMany(() => OrderItem, (entity) => entity.ebook, { cascade: true })
+  orderItem: OrderItem[]
 
   @ManyToMany(() => Author, { cascade: true })
   @JoinTable({

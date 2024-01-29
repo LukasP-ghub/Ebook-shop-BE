@@ -1,10 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { EbooksService } from '../ebooks/ebooks.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Order } from './entities/order.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrdersService {
-  create(createOrderDto: CreateOrderDto) {
+
+  constructor(
+    @Inject(forwardRef(() => EbooksService)) private ebooksService: EbooksService,
+    @InjectRepository(Order) private orderRepository: Repository<Order>
+  ) { }
+
+  create(user, createOrderDto: CreateOrderDto) {
+    const { products_ids, payment_method, discount_code, customer_first_name, customer_last_name, customer_address, zip_code, tel_number } = createOrderDto;
+
     return 'This action adds a new order';
   }
 

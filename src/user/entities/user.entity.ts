@@ -16,15 +16,38 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   user_id: string;
 
-  @Column({
-    length: 255,
-  })
+  @Column({ unique: true })
+  username: string;
+
+  @Column({ length: 255, unique: true })
   email: string;
 
-  // @Column({
-  //   length: 12,
-  // })
-  // login: string;
+  @Column({ nullable: true })
+  firstName: string;
+
+  @Column({ nullable: true })
+  lastName: string;
+
+  @Column({ nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ nullable: true })
+  phoneNumber: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  zip: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
   @Column()
   pwdHash: string;

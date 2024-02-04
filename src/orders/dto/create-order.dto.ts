@@ -1,11 +1,55 @@
+import { IsString, IsArray, IsNotEmpty, IsOptional, IsPhoneNumber, Length, ArrayMinSize, ArrayNotEmpty } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
+
 export class CreateOrderDto {
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
   order_id: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayNotEmpty()
   products_ids: string[];
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
   payment_method: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
   discount_code: string;
-  customer_first_name: string;
-  customer_last_name: string;
-  customer_address: string;
-  zip_code: string;
-  tel_number: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  address: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  @Length(5, 10)
+  zip: string;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  @IsPhoneNumber('PL')
+  @Transform(value => value.toString())
+  phoneNumber: string;
 }
+

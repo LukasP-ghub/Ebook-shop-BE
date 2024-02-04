@@ -10,15 +10,7 @@ import { Ebook } from './entities/ebook.entity';
 import * as path from 'path';
 import * as fs from 'fs';
 import { MulterDiskUploadedFiles } from '../types';
-import { Author } from '../authors/entities/author.entity';
-import { Category } from '../categories/entities/category.entity';
-import { Discount } from '../discounts/entities/discount.entity';
-import { EbookLanguage } from './entities/ebook_language.entity';
-import { classToPlain, instanceToInstance, instanceToPlain, plainToClass, plainToInstance } from 'class-transformer';
-import { EbookLanguageDto } from './dto/ebook_language.dto';
 import { Cover } from './entities/cover.entity';
-import { v4 as uuid } from 'uuid';
-import { Publisher } from './entities/publisher.entity';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
 import { DiscountsService } from '../discounts/discounts.service';
@@ -46,14 +38,6 @@ export class EbooksService {
     try {
       const currEbook = await this.ebooksRepository.findOne({
         where: { ebook_id },
-        // relations: {
-        //   language: true,
-        //   publisher: true,
-        //   author: true,
-        //   category: true,
-        //   discount: true,
-        //   cover: true,
-        // }
         relations: relationsToUpdate
       });
 
@@ -65,59 +49,15 @@ export class EbooksService {
         }
       }
 
-
       if (upEbookData?.author) {
-        //   upEbookData.author.forEach(newElem => {
-        //     const currAuthor = currEbook.author.find(currElem => currElem.author_id && currElem.author_id === newElem?.author_id);
-
-        //     if (currAuthor) {
-        //       for (const prop in newElem) {
-        //         currAuthor[prop] = newElem[prop];
-        //       }
-        //     } else {
-        //       const newAuthor = new Author();
-        //       for (const prop in newElem) {
-        //         newAuthor[prop] = newElem[prop];
-        //       }
-        //       currEbook.author.push(newAuthor);
-        //     }
-        //   })
         currEbook.author = await this.authorService.updateMany(upEbookData.author, { entityOnly: true })
       }
 
       if (upEbookData?.category) {
-        // upEbookData.category.forEach(newElem => {
-        //   const currCategory = currEbook.category.find(currElem => currElem.category_id && currElem.category_id === newElem?.category_id);
-        //   if (currCategory) {
-        //     for (const prop in newElem) {
-        //       currCategory[prop] = newElem[prop];
-        //     }
-        //   } else {
-        //     const newCategory = new Category();
-        //     for (const prop in newElem) {
-        //       newCategory[prop] = newElem[prop];
-        //     }
-        //     currEbook.category.push(newCategory);
-        //   }
-        // })
         currEbook.category = await this.categoryService.updateMany(upEbookData.category, { entityOnly: true })
       }
 
       if (upEbookData?.discount) {
-        // upEbookData.discount.forEach(newElem => {
-        //   const currDiscount = currEbook.discount.find(currElem => currElem.discount_id && currElem.discount_id === newElem?.discount_id);
-        //   if (currDiscount) {
-        //     for (const prop in newElem) {
-        //       currDiscount[prop] = newElem[prop];
-        //     }
-        //   } else {
-        //     const newDiscount = new Discount();
-        //     for (const prop in newElem) {
-        //       newDiscount[prop] = newElem[prop];
-        //     }
-        //     currEbook.discount.push(newDiscount);
-        //   }
-        // })
         currEbook.discount = await this.discountService.updateMany(upEbookData.discount, { entityOnly: true })
       }
 

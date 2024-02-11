@@ -5,7 +5,7 @@ import { Ebook } from "../../ebooks/entities/ebook.entity";
 @Entity()
 export class OrderItem {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @ManyToOne(() => Order, order => order.orderItem, { cascade: true })

@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsString } from "class-validator";
+import { IsString, isDate } from "class-validator";
 
 export class UserDto {
   @Expose()
@@ -8,11 +8,39 @@ export class UserDto {
 
   @Expose()
   @IsString()
-  email: string;
+  username: string;
 
-  // @Expose()
-  // @IsString()
-  // login: string;
+  @Expose()
+  @IsString()
+  firstName: string;
+
+  @Expose()
+  @IsString()
+  lastName: string;
+
+  @Expose()
+  @IsString()
+  dateOfBirth: string;
+
+  @Expose()
+  @IsString()
+  phoneNumber: string;
+
+  @Expose()
+  @IsString()
+  address: string;
+
+  @Expose()
+  @IsString()
+  city: string;
+
+  @Expose()
+  @IsString()
+  zip: string;
+
+  @Expose()
+  @IsString()
+  email: string;
 
   @Expose()
   @IsString()

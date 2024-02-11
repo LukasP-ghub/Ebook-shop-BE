@@ -27,16 +27,6 @@ export class CreateOrderDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
-  firstName: string;
-
-  @Expose()
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
-
-  @Expose()
-  @IsNotEmpty()
-  @IsString()
   address: string;
 
   @Expose()

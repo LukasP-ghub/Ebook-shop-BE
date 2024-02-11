@@ -1,7 +1,7 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { storageDir } from '../utils/storage';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { EbookDBSearchKey } from '../types/ebook/ebook';
 import { AddEbookDto } from './dto/add-ebook.dto';
 import { FilterEbookDto } from './dto/filter-ebook.dto';
@@ -187,6 +187,10 @@ export class EbooksService {
       }
 
     }
+  }
+
+  async findByIds(ebook_ids: string[]) {
+    return await this.ebooksRepository.findBy({ ebook_id: In(ebook_ids) });
   }
 
 }

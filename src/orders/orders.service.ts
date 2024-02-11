@@ -5,17 +5,29 @@ import { EbooksService } from '../ebooks/ebooks.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class OrdersService {
 
   constructor(
     @Inject(forwardRef(() => EbooksService)) private ebooksService: EbooksService,
-    @InjectRepository(Order) private orderRepository: Repository<Order>
+    @Inject(forwardRef(() => UserService)) private userService: UserService,
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
   ) { }
 
-  create(user, createOrderDto: CreateOrderDto) {
-    const { products_ids, payment_method, discount_code, customer_first_name, customer_last_name, customer_address, zip_code, tel_number } = createOrderDto;
+
+  async create(user: User, createOrderDto: CreateOrderDto) {
+    const { products_ids, payment_method, discount_code, address, zip, phoneNumber } = createOrderDto;
+    const userDataToUpdate = { address, zip, phoneNumber };
+    await this.userService.update(user, userDataToUpdate);
+    const products = await this.ebooksService.findByIds(products_ids);
+
+
+    const order = this.orderRepository.create();
+    order.order_id = createOrderDto.order_id;
+    order.orderDate = new Date();
 
     return 'This action adds a new order';
   }

@@ -6,7 +6,7 @@ import { Ebook } from "../../ebooks/entities/ebook.entity";
 export class OrderItem {
 
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  item_id: string;
 
   @ManyToOne(() => Order, order => order.orderItem, { cascade: true })
   @JoinColumn({ name: 'order_id' })

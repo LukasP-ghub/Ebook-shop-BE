@@ -13,7 +13,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) { }
 
   @Post()
-  @Roles('user')
+  @Roles('admin', 'user')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(
     @Body() createOrderDto: CreateOrderDto,

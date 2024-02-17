@@ -17,7 +17,7 @@ export class Order {
   @Column({ type: 'varchar', length: 20 })
   payment_method: string;
 
-  @ManyToOne(() => User, (entity) => entity.order, { cascade: true })
+  @ManyToOne(() => User, (entity) => entity.order)
   @JoinColumn({ name: 'user' })
   user: User;
 

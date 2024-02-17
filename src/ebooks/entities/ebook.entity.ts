@@ -64,7 +64,7 @@ export class Ebook {
   @OneToMany(() => Cover, (entity) => entity.ebook_id, { cascade: true })
   cover: Cover[];
 
-  @OneToMany(() => OrderItem, (entity) => entity.ebook, { cascade: true })
+  @OneToMany(() => OrderItem, (entity) => entity.ebook)
   orderItem: OrderItem[]
 
   @ManyToMany(() => Author, { cascade: true })

@@ -43,7 +43,7 @@ export class OrdersService {
     order.payment_method = payment_method;
     order.user = user;
     order.totalAmount = orderItems.reduce((acc, obj) => {
-      return acc + obj.subtotal;
+      return acc + +obj.subtotal;
     }, 0);
 
     const res = await this.orderRepository.save(order);

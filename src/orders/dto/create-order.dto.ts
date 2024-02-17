@@ -1,4 +1,4 @@
-import { IsString, IsArray, IsNotEmpty, IsOptional, IsPhoneNumber, Length, ArrayMinSize, ArrayNotEmpty } from 'class-validator';
+import { IsString, IsArray, IsNotEmpty, IsOptional, IsPhoneNumber, Length, ArrayMinSize, ArrayNotEmpty, IsMobilePhone } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 
 export class CreateOrderDto {
@@ -8,7 +8,7 @@ export class CreateOrderDto {
   order_id: string;
 
   @Expose()
-  @IsNotEmpty()
+  //@IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
   @ArrayNotEmpty()
@@ -38,8 +38,7 @@ export class CreateOrderDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
-  @IsPhoneNumber('PL')
-  @Transform(value => value.toString())
+  @IsMobilePhone('pl-PL')
   phoneNumber: string;
 }
 

@@ -93,9 +93,6 @@ export class EbooksService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ebook`;
-  }
 
   async filter({ key, phrase, maxPrice, minPrice }: FilterEbookDto): Promise<Ebook[]> {
 

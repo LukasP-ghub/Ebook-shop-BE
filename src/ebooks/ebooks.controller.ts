@@ -59,7 +59,6 @@ export class EbooksController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
     return 'delete done';
-    //return this.ebooksService.remove(+id);
   }
 
   @Post('/add/ebook')

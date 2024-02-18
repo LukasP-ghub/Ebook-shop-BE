@@ -3,7 +3,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { AuthorDto } from '../dto/author.dto';
+
 
 @Entity()
 export class Author {

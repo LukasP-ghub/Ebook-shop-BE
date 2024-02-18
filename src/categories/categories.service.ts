@@ -11,17 +11,6 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
   ) { }
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
-  }
-
-  findAll() {
-    return `This action returns all categories`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
 
   async update(category_id: string, updateCategoryDto: UpdateCategoryDto, options = { entityOnly: false }) {
     try {
@@ -54,7 +43,4 @@ export class CategoriesService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
 }

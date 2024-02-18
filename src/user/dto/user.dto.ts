@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsString, isDate } from "class-validator";
+import { IsString } from "class-validator";
 
 export class UserDto {
   @Expose()

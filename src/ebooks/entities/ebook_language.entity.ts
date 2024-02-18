@@ -1,10 +1,7 @@
 import { IsOptional, IsUUID } from 'class-validator';
 import {
-  BaseEntity,
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';

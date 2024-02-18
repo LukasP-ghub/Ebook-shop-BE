@@ -1,4 +1,4 @@
-import { Expose, Transform } from "class-transformer";
+import { Expose } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 import { EbookDBSearchKey } from "../../types";
 

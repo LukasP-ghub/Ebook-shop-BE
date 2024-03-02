@@ -70,9 +70,9 @@ export class EbooksService {
           currEbook.cover.push(newPhoto);
         })
       }
-      //const res = await this.ebooksRepository.save(currEbook);
+      const res = await this.ebooksRepository.save(currEbook);
 
-      return currEbook;
+      return res;
 
     }
     catch (error) {

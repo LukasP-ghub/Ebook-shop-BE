@@ -1,5 +1,5 @@
 import { Expose, plainToInstance, Transform, Type } from "class-transformer";
-import { ArrayMinSize, ArrayNotEmpty, IsAlpha, IsArray, IsNotEmpty, IsNotEmptyObject, IsNumber, IsObject, IsString, Max, MaxLength, Min, ValidateNested, ValidationError } from "class-validator";
+import { ArrayMinSize, ArrayNotEmpty, IsAlpha, IsArray, IsDateString, IsNotEmpty, IsNotEmptyObject, IsNumber, IsObject, IsString, Max, MaxLength, Min, ValidateNested, ValidationError } from "class-validator";
 import { CategoryDto } from "../../categories/dto/category.dto";
 import { AuthorDto } from "../../authors/dto/author.dto";
 import { tryJsonParse } from "../../utils/tryJsonParse";
@@ -28,7 +28,7 @@ export class EbookDto {
   pages: number;
 
   @Expose()
-  @IsString()
+  @IsDateString()
   publication_date: string;
 
   @Expose()

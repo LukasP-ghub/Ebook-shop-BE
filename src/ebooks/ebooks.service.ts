@@ -27,18 +27,16 @@ export class EbooksService {
 
   async update(ebook_id: string, upEbookData: UpdateEbookDto, files: MulterDiskUploadedFiles) {
     const photo = files?.cover ?? [];
-    const relationsToUpdate = {};
-
-    for (const prop in upEbookData) {
-      if (typeof upEbookData[prop] === 'object' && typeof upEbookData[prop] !== 'function') {
-        relationsToUpdate[prop] = true;
-      }
-    }
 
     try {
       const currEbook = await this.ebooksRepository.findOne({
         where: { ebook_id },
-        relations: relationsToUpdate
+        relations: {
+          cover: true,
+          author: true,
+          category: true,
+          discount: true,
+        }
       });
 
       if (!currEbook) return 'Record not found';

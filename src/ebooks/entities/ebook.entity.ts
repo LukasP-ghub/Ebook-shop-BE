@@ -52,9 +52,21 @@ export class Ebook {
   })
   price: number;
 
-  @ManyToOne(() => EbookLanguage, (entity) => entity.ebook, { cascade: true })
-  @JoinColumn({ name: 'language' })
-  language: EbookLanguage;
+  @Column({
+    nullable: false,
+    length: 20,
+  })
+  language_name: string
+
+  @Column({
+    length: 5,
+    nullable: false,
+  })
+  language_code: string;
+
+  // @ManyToOne(() => EbookLanguage, (entity) => entity.ebook, { cascade: true })
+  // @JoinColumn({ name: 'language' })
+  // language: EbookLanguage;
 
   @ManyToOne(() => Publisher, (entity) => entity.ebook, { cascade: true })
   @JoinColumn({ name: 'publisher' })

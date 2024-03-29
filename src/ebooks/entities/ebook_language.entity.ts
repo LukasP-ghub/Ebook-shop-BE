@@ -24,7 +24,7 @@ export class EbookLanguage {
   })
   language_code: string;
 
-  @IsOptional()
-  @OneToMany(() => Ebook, (entity) => entity.language)
-  ebook: Ebook[]
+  // @IsOptional()
+  // @OneToMany(() => Ebook, (entity) => entity.language)
+  // ebook: Ebook[]
 }

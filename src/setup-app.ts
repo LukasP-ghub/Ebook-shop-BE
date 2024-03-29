@@ -21,7 +21,7 @@ export const setupApp = (app: any) => {
     }
   }));
 
-  app.useGlobalFilters(new AllExceptionsFilter());
+  //app.useGlobalFilters(new AllExceptionsFilter());
 
   app.use(cookieParser(COOKIE_SECRET));
   app.getHttpServer().setTimeout(10000);

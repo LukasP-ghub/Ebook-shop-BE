@@ -3,7 +3,7 @@ import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Discount } from './entities/discount.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class DiscountsService {
@@ -19,8 +19,27 @@ export class DiscountsService {
     return `This action returns all discounds`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} discound`;
+  async findOne(key: string) {
+    const res = await this.discountRepository.findOne({
+      where: [{ discount_id: key }, { discount_name: key }],
+    });
+
+    if (!res) throw new Error('Record not found');
+    return res;
+
+  }
+
+  async findMany(keys: string[]) {
+    try {
+      const discounts = await this.discountRepository.find({
+        where: { discount_id: In(keys) }
+      });
+
+      return discounts;
+
+    } catch (error) {
+      throw error;
+    }
   }
 
   async update(discount_id: string, updateDiscountDto: UpdateDiscountDto, options = { entityOnly: false }) {

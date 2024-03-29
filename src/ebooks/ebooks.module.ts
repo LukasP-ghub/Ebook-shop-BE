@@ -6,9 +6,15 @@ import { Ebook } from './entities/ebook.entity';
 import { AuthorsModule } from '../authors/authors.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { DiscountsModule } from '../discounts/discounts.module';
+import { PublishersModule } from '../publishers/publishers.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ebook]), forwardRef(() => AuthorsModule), forwardRef(() => CategoriesModule), forwardRef(() => DiscountsModule)],
+  imports: [TypeOrmModule.forFeature([Ebook]),
+  forwardRef(() => AuthorsModule),
+  forwardRef(() => CategoriesModule),
+  forwardRef(() => DiscountsModule),
+  forwardRef(() => PublishersModule),
+  ],
   exports: [EbooksService],
   controllers: [EbooksController],
   providers: [EbooksService]

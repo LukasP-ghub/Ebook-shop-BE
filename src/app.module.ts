@@ -11,6 +11,7 @@ import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from './orders/orders.module';
+import { PublishersModule } from './publishers/publishers.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { OrdersModule } from './orders/orders.module';
     DiscountsModule,
     UserModule,
     AuthModule,
-    OrdersModule],
+    OrdersModule,
+    PublishersModule],
   controllers: [AppController],
   providers: [AppService],
 })

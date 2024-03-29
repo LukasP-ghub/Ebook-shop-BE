@@ -20,7 +20,7 @@ import { DeleteFileOnErrorFilter } from '../filters/deleteFileOnError.filter';
 export class EbooksController {
   constructor(private readonly ebooksService: EbooksService) { }
 
-  @Serialize(EbookDto)
+  //@Serialize(EbookDto)
   @Get('/filter')
   async findMany(@Query() query: FilterEbookDto) {
     return await this.ebooksService.filter(query);

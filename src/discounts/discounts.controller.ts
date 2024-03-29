@@ -28,7 +28,7 @@ export class DiscountsController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findOne(@Param('id') id: string) {
-    return this.discountsService.findOne(+id);
+    return this.discountsService.findOne(id);
   }
 
   @Patch(':id')

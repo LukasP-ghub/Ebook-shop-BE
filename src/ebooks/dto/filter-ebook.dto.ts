@@ -1,17 +1,13 @@
 import { Expose } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
-import { EbookDBSearchKey } from "../../types";
+import { Sorting } from "../../types";
+
 
 export class FilterEbookDto {
   @Expose()
-  @IsEnum(EbookDBSearchKey)
-  @IsOptional()
-  key: EbookDBSearchKey = EbookDBSearchKey.title;
-
-  @Expose()
   @IsOptional()
   @IsString()
-  phrase: string;
+  phrase: string = '';
 
   @Expose()
   @IsOptional()
@@ -26,4 +22,19 @@ export class FilterEbookDto {
   @Min(0)
   @Max(999)
   minPrice: number = 0;
+
+  @Expose()
+  @IsOptional()
+  @IsEnum(Sorting)
+  sorting: Sorting = Sorting.ASC;
+
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  limit: number = 10;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  category: string = '';
 }

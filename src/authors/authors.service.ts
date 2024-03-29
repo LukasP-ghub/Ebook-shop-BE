@@ -3,7 +3,7 @@ import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './entities/author.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthorsService {
@@ -23,6 +23,19 @@ export class AuthorsService {
     }
   }
 
+  async findMany(keys: string[]) {
+    try {
+      const authors = await this.authorRepository.find({
+        where: { author_id: In(keys) }
+      });
+
+      return authors;
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findAll() {
     try {
       const authors = await this.authorRepository.find();
@@ -33,11 +46,13 @@ export class AuthorsService {
     }
   }
 
-  async findOne(author_id: string) {
+  async findOne(key: string) {
     try {
       const author = await this.authorRepository.findOne({
-        where: { author_id },
+        where: [{ author_id: key }, { author_name: key }],
       });
+
+      if (!author) throw new Error('Record not found');
       return author;
 
     } catch (error) {

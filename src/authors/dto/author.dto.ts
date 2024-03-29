@@ -4,7 +4,6 @@ import { IsOptional, IsString, IsUUID } from "class-validator";
 
 export class AuthorDto {
   @Expose()
-  @IsOptional()
   @IsUUID()
   author_id: string;
 

@@ -22,3 +22,8 @@ export interface EbookDBSearchOptions {
     maxPrice?: number,
     minPrice?: number,
 }
+
+export enum Sorting {
+    ASC = 'ASC',
+    DESC = 'DESC',
+}

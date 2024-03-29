@@ -1,10 +1,9 @@
 import { Expose } from "class-transformer";
-import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsBoolean, IsString, IsUUID } from "class-validator";
 
 
 export class CategoryDto {
   @Expose()
-  @IsOptional()
   @IsUUID()
   category_id: string;
 

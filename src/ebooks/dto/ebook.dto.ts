@@ -42,12 +42,22 @@ export class EbookDto {
   price: number;
 
   @Expose()
+  @IsString()
   @IsNotEmpty()
-  @IsNotEmptyObject()
-  @Transform(({ value }) => plainToInstance(EbookLanguageDto, tryJsonParse(value), { enableImplicitConversion: true, excludeExtraneousValues: true, exposeUnsetFields: false }))
-  @ValidateNested()
-  @Type(() => EbookLanguageDto)
-  language: EbookLanguageDto;
+  language_code: string;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  language_name: string;
+
+  // @Expose()
+  // @IsNotEmpty()
+  // @IsNotEmptyObject()
+  // @Transform(({ value }) => plainToInstance(EbookLanguageDto, tryJsonParse(value), { enableImplicitConversion: true, excludeExtraneousValues: true, exposeUnsetFields: false }))
+  // @ValidateNested()
+  // @Type(() => EbookLanguageDto)
+  // language: EbookLanguageDto;
 
   @Expose()
   @IsNotEmpty()

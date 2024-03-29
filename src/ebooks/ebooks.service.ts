@@ -1,7 +1,7 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { storageDir } from '../utils/storage';
-import { Brackets, In, Repository } from 'typeorm';
+import { Between, Brackets, In, Like, Repository } from 'typeorm';
 import { EbookDBSearchKey } from '../types/ebook/ebook';
 import { AddEbookDto } from './dto/add-ebook.dto';
 import { FilterEbookDto } from './dto/filter-ebook.dto';
@@ -14,6 +14,7 @@ import { Cover } from './entities/cover.entity';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
 import { DiscountsService } from '../discounts/discounts.service';
+import { PublishersService } from '../publishers/publishers.service';
 
 @Injectable()
 export class EbooksService {
@@ -21,6 +22,7 @@ export class EbooksService {
     @Inject(forwardRef(() => AuthorsService)) private authorService: AuthorsService,
     @Inject(forwardRef(() => CategoriesService)) private categoryService: CategoriesService,
     @Inject(forwardRef(() => DiscountsService)) private discountService: DiscountsService,
+    @Inject(forwardRef(() => PublishersService)) private publisherService: PublishersService,
     @InjectRepository(Ebook)
     private ebooksRepository: Repository<Ebook>,
   ) { }
@@ -44,20 +46,11 @@ export class EbooksService {
       for (const prop in upEbookData) {
         if (typeof upEbookData[prop] !== 'object' && typeof upEbookData[prop] !== 'function') {
           currEbook[prop] = upEbookData[prop];
+        } else {
+          currEbook[prop] = await this[prop + 'Service'].updateMany(upEbookData[prop], { entityOnly: true });
         }
       }
 
-      if (upEbookData?.author) {
-        currEbook.author = await this.authorService.updateMany(upEbookData.author, { entityOnly: true })
-      }
-
-      if (upEbookData?.category) {
-        currEbook.category = await this.categoryService.updateMany(upEbookData.category, { entityOnly: true })
-      }
-
-      if (upEbookData?.discount) {
-        currEbook.discount = await this.discountService.updateMany(upEbookData.discount, { entityOnly: true })
-      }
 
       if (photo.length) {
         photo.forEach(newElem => {
@@ -87,43 +80,76 @@ export class EbooksService {
       } catch (error2) {
         throw error2
       }
-
+      throw error;
     }
   }
 
 
-  async filter({ key, phrase, maxPrice, minPrice }: FilterEbookDto): Promise<Ebook[]> {
+  async filter(filterConditions: FilterEbookDto): Promise<Ebook[]> {
+    const { phrase, maxPrice, minPrice, sorting, limit, category } = filterConditions;
 
-    const res = await this.ebooksRepository
-      .createQueryBuilder("ebook")
-      .leftJoinAndSelect("ebook.author", "ebook_author")
-      .leftJoinAndSelect("ebook.category", "ebook_category")
-      .leftJoinAndSelect("ebook.discount", "ebook_discount")
-      .leftJoinAndSelect("ebook.language", "ebook_language")
-      .leftJoinAndSelect("ebook.publisher", "publisher")
-      .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_language.language_code', 'ebook_language.language_name', 'ebook_category.category_id', 'ebook_category.category_name', 'ebook_category.popular'])
-      .where(new Brackets((qb) => {
-        switch (key) {
-          case EbookDBSearchKey.author_id:
-            qb.where("ebook_author.author_id = :phrase", { phrase })
-            break;
+    const res = await this.ebooksRepository.find({
+      where: [
+        {
+          title: Like(`%${phrase}%`),
+          price: Between(minPrice, maxPrice),
+          category: {
+            category_name: Like(`%${category}%`),
+          },
+        },
+        {
+          price: Between(minPrice, maxPrice),
+          author: {
+            author_name: Like(`%${phrase}%`),
+          },
+          category: {
+            category_name: Like(`%${category}%`),
+          },
+        },
+      ],
+      order: {
+        price: sorting,
+      },
+      take: limit,
+      relations: {
+        cover: true,
+        author: true,
+        category: true,
+        discount: true,
+      }
+    });
+    console.log(res);
 
-          case EbookDBSearchKey.author_name:
-            qb.where("ebook_author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
-            break;
 
-          case EbookDBSearchKey.ebook_category:
-            qb.where("ebook_category.category_name = :phrase", { phrase })
-            break;
+    // const res = await this.ebooksRepository
+    //   .createQueryBuilder("ebook")
+    //   .leftJoinAndSelect("ebook.author", "ebook_author")
+    //   .leftJoinAndSelect("ebook.category", "ebook_category")
+    //   .leftJoinAndSelect("ebook.discount", "ebook_discount")
+    //   .leftJoinAndSelect("ebook.publisher", "publisher")
+    //   .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.language_name', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_category.category_id', 'ebook_category.category_name', 'ebook_category.popular'])
+    //   .where(new Brackets((qb) => {
+    //     switch (key) {
+    //       case EbookDBSearchKey.author_id:
+    //         qb.where("ebook_author.author_id = :phrase", { phrase })
+    //         break;
 
-          default:
-            qb.where("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
-            break;
-        }
-      }))
-      .andWhere("ebook.price <= :maxPrice", { maxPrice })
-      .andWhere("ebook.price >= :minPrice", { minPrice })
-      .getMany();
+    //       case EbookDBSearchKey.author_name:
+    //         qb.where("ebook_author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
+    //         break;
+
+    //       case EbookDBSearchKey.ebook_category:
+    //         qb.where("ebook_category.category_name = :phrase", { phrase })
+    //         break;
+
+    //       default:
+    //         qb.where("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
+    //         break;
+    //     }
+    //   }))
+    //   .andWhere("ebook.price <= :maxPrice", { maxPrice })
+    //   .andWhere("ebook.price >= :minPrice", { minPrice })
+    //   .getMany();
 
     return res;
   }
@@ -150,7 +176,27 @@ export class EbooksService {
     const photo = files?.cover ?? [];
 
     try {
-      const ebook = this.ebooksRepository.create(req);
+      const ebook = this.ebooksRepository.create();
+
+      for (const prop in req) {
+        const service = this[`${prop}Service`];
+
+        if (typeof req[prop] !== 'object' && typeof req[prop] !== 'function') {
+          ebook[prop] = req[prop];
+        } else if (Array.isArray(req[prop])) {
+          if (service && typeof service?.findMany === 'function') {
+            ebook[prop] = await service.findMany(req[prop]);
+          } else {
+            throw new BadRequestException(`Service ${prop}Service or method findMany does not exist`);
+          }
+        } else {
+          if (service && typeof service?.findOne === 'function') {
+            ebook[prop] = await service.findOne(req[prop]);
+          } else {
+            throw new BadRequestException(`Service ${prop}Service or method findOne does not exist`);
+          }
+        }
+      }
 
       if (photo.length) {
         ebook.cover = [];
@@ -163,9 +209,13 @@ export class EbooksService {
         })
       }
 
-      const res = await this.ebooksRepository.save(ebook);
-      return res;
 
+      try {
+        const res = await this.ebooksRepository.save(ebook);
+        return res;
+      } catch (DBError) {
+        throw new InternalServerErrorException('A database error occurred');
+      }
     } catch (error) {
       try {
         if (photo) {
@@ -175,13 +225,14 @@ export class EbooksService {
               console.log(`file ${item.filename} was deleted`);
             });
           })
-
         }
+
       } catch (error2) {
         throw error2
       }
-
+      throw error;
     }
+
   }
 
   async findByIds(ebook_ids: string[]) {

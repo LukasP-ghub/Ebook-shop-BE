@@ -86,72 +86,45 @@ export class EbooksService {
 
 
   async filter(filterConditions: FilterEbookDto): Promise<Ebook[]> {
-    const { phrase, maxPrice, minPrice, sorting, limit, category } = filterConditions;
-
-    const res = await this.ebooksRepository.find({
-      where: [
-        {
-          title: Like(`%${phrase}%`),
-          price: Between(minPrice, maxPrice),
-          category: {
-            category_name: Like(`%${category}%`),
+    const { phrase, maxPrice, minPrice, sorting, limit, page, category } = filterConditions;
+    const skip = (page - 1) * limit;
+    try {
+      const res = await this.ebooksRepository.find({
+        where: [
+          {
+            title: Like(`%${phrase}%`),
+            price: Between(minPrice, maxPrice),
+            category: {
+              category_name: Like(`%${category}%`),
+            },
           },
+          {
+            price: Between(minPrice, maxPrice),
+            author: {
+              author_name: Like(`%${phrase}%`),
+            },
+            category: {
+              category_name: Like(`%${category}%`),
+            },
+          },
+        ],
+        order: {
+          price: sorting,
         },
-        {
-          price: Between(minPrice, maxPrice),
-          author: {
-            author_name: Like(`%${phrase}%`),
-          },
-          category: {
-            category_name: Like(`%${category}%`),
-          },
-        },
-      ],
-      order: {
-        price: sorting,
-      },
-      take: limit,
-      relations: {
-        cover: true,
-        author: true,
-        category: true,
-        discount: true,
-      }
-    });
-    console.log(res);
+        take: limit,
+        skip: skip,
+        relations: {
+          cover: true,
+          author: true,
+          category: true,
+          discount: true,
+        }
+      });
 
-
-    // const res = await this.ebooksRepository
-    //   .createQueryBuilder("ebook")
-    //   .leftJoinAndSelect("ebook.author", "ebook_author")
-    //   .leftJoinAndSelect("ebook.category", "ebook_category")
-    //   .leftJoinAndSelect("ebook.discount", "ebook_discount")
-    //   .leftJoinAndSelect("ebook.publisher", "publisher")
-    //   .select(['ebook_author.author_id', 'ebook_author.author_name', 'ebook.ebook_id', 'ebook.title', 'ebook.language_name', 'ebook.pages', 'ebook.publication_date', 'ebook.description', 'ebook.price', 'publisher.publisher_name', 'ebook_category.category_id', 'ebook_category.category_name', 'ebook_category.popular'])
-    //   .where(new Brackets((qb) => {
-    //     switch (key) {
-    //       case EbookDBSearchKey.author_id:
-    //         qb.where("ebook_author.author_id = :phrase", { phrase })
-    //         break;
-
-    //       case EbookDBSearchKey.author_name:
-    //         qb.where("ebook_author.author_name LIKE CONCAT('%',:phrase,'%')", { phrase })
-    //         break;
-
-    //       case EbookDBSearchKey.ebook_category:
-    //         qb.where("ebook_category.category_name = :phrase", { phrase })
-    //         break;
-
-    //       default:
-    //         qb.where("ebook.title LIKE CONCAT('%',:phrase,'%')", { phrase })
-    //         break;
-    //     }
-    //   }))
-    //   .andWhere("ebook.price <= :maxPrice", { maxPrice })
-    //   .andWhere("ebook.price >= :minPrice", { minPrice })
-    //   .getMany();
-
-    return res;
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getPhoto(ebook_id: string, res: any) {

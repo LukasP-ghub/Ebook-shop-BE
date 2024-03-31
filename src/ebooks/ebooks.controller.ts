@@ -22,7 +22,7 @@ export class EbooksController {
 
   //@Serialize(EbookDto)
   @Get('/filter')
-  async findMany(@Query() query: FilterEbookDto) {
+  async filter(@Query() query: FilterEbookDto) {
     return await this.ebooksService.filter(query);
   }
 

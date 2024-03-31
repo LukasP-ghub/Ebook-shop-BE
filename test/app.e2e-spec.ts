@@ -16,6 +16,7 @@ describe('App test (e2e)', () => {
   const email = 'test@test.pl';
   const pwd = 'qwerty';
   let adminLoginCookie;
+  let matchEbook;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -55,7 +56,7 @@ describe('App test (e2e)', () => {
   });
 
   it('Handle create ebook request', () => {
-    const matchEbook = new Ebook();
+    //const matchEbook = new Ebook();
     const ebook: AddEbookDto = {
       title: 'testcik',
       pages: 200,
@@ -88,6 +89,7 @@ describe('App test (e2e)', () => {
       .field('category', JSON.stringify(ebook.category))
       .expect(201)
       .then((res) => {
+        matchEbook = res.body;
         expect(res).toHaveProperty('status', 201);
         expect(res.body).toEqual(matchEbook);
       })
@@ -98,15 +100,11 @@ describe('App test (e2e)', () => {
       phrase: 'testcik',
     }
 
-    const matchEbook = new Ebook();
-
-    //return undefined;
     return request(app.getHttpServer())
       .get('/ebooks/filter')
       .query(params)
+      .expect(200)
       .then((res) => {
-        //console.log(res.body);
-
         expect(res.body).toMatchObject([matchEbook]);
       })
   });

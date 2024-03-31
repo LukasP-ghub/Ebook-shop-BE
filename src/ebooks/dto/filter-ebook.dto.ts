@@ -35,6 +35,11 @@ export class FilterEbookDto {
 
   @Expose()
   @IsOptional()
+  @IsNumber()
+  page: number = 1;
+
+  @Expose()
+  @IsOptional()
   @IsString()
   category: string = '';
 }

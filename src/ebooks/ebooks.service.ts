@@ -47,7 +47,12 @@ export class EbooksService {
         if (typeof upEbookData[prop] !== 'object' && typeof upEbookData[prop] !== 'function') {
           currEbook[prop] = upEbookData[prop];
         } else {
-          currEbook[prop] = await this[prop + 'Service'].updateMany(upEbookData[prop], { entityOnly: true });
+          const service = this[prop + 'Service'];
+          if (service && typeof service?.updateMany === 'function') {
+            currEbook[prop] = await service.updateMany(upEbookData[prop], { entityOnly: true });
+          } else {
+            throw new BadRequestException(`Service ${prop}Service or method updateMany does not exist`);
+          }
         }
       }
 

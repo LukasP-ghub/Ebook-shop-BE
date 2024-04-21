@@ -12,10 +12,9 @@ import {
 import { Author } from '../../authors/entities/author.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Discount } from '../../discounts/entities/discount.entity';
-import { Cover } from './cover.entity';
-import { EbookLanguage } from './ebook_language.entity';
-import { Publisher } from './publisher.entity';
 import { OrderItem } from '../../orders/entities/order_item.entity';
+import { Cover } from './cover.entity';
+import { Publisher } from './publisher.entity';
 
 @Entity()
 export class Ebook {
@@ -63,6 +62,11 @@ export class Ebook {
     nullable: false,
   })
   language_code: string;
+
+  @Column({
+    nullable: false,
+  })
+  file: string;
 
   // @ManyToOne(() => EbookLanguage, (entity) => entity.ebook, { cascade: true })
   // @JoinColumn({ name: 'language' })

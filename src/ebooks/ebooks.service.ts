@@ -1,20 +1,20 @@
 import { BadRequestException, Inject, Injectable, InternalServerErrorException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { storageDir } from '../utils/storage';
-import { Between, Brackets, In, Like, Repository } from 'typeorm';
-import { EbookDBSearchKey } from '../types/ebook/ebook';
-import { AddEbookDto } from './dto/add-ebook.dto';
-import { FilterEbookDto } from './dto/filter-ebook.dto';
-import { UpdateEbookDto } from './dto/update-ebook.dto';
-import { Ebook } from './entities/ebook.entity';
-import * as path from 'path';
 import * as fs from 'fs';
-import { MulterDiskUploadedFiles } from '../types';
-import { Cover } from './entities/cover.entity';
+import * as path from 'path';
+import { Between, In, Like, Repository } from 'typeorm';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
 import { DiscountsService } from '../discounts/discounts.service';
 import { PublishersService } from '../publishers/publishers.service';
+import { MulterDiskUploadedFiles } from '../types';
+import { User } from '../user/entities/user.entity';
+import { storageDir } from '../utils/storage';
+import { AddEbookDto } from './dto/add-ebook.dto';
+import { FilterEbookDto } from './dto/filter-ebook.dto';
+import { UpdateEbookDto } from './dto/update-ebook.dto';
+import { Cover } from './entities/cover.entity';
+import { Ebook } from './entities/ebook.entity';
 
 @Injectable()
 export class EbooksService {
@@ -132,23 +132,6 @@ export class EbooksService {
     }
   }
 
-  async getPhoto(ebook_id: string, res: any) {
-    try {
-      const product = await this.ebooksRepository.findOneBy({ ebook_id });
-      if (!product) throw new Error('No object found!');
-      if (!product.cover) throw new Error('No photo in this entity!');
-
-      res.sendFile(
-        product.cover,
-        {
-          root: path.join(storageDir(), 'book-covers'),
-        },
-      );
-    } catch (e) {
-      res.json({ error: e.message })
-    }
-  }
-
 
   async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles) {
     const photo = files?.cover ?? [];
@@ -215,6 +198,42 @@ export class EbooksService {
 
   async findByIds(ebook_ids: string[]) {
     return await this.ebooksRepository.findBy({ ebook_id: In(ebook_ids) });
+  }
+
+  async getPhoto(ebook_id: string, res: any) {
+    try {
+      const product = await this.ebooksRepository.findOneBy({ ebook_id });
+      if (!product) throw new Error('No object found!');
+      if (!product.cover) throw new Error('No photo in this entity!');
+
+      res.sendFile(
+        product.cover,
+        {
+          root: path.join(storageDir(), 'book-covers'),
+        },
+      );
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+
+  async getEbookFile(ebook_id: string, user: User, res: any) {
+    try {
+      const customerEbooks = user?.order?.map((item) => item.orderItem.map((elem) => elem.ebook.ebook_id)).flat();
+      if (!customerEbooks.includes(ebook_id)) throw new Error('No access to this file!');
+      const product = await this.ebooksRepository.findOneBy({ ebook_id });
+      if (!product) throw new Error('No object found!');
+      if (!product.file) throw new Error('No file in this entity!');
+
+      res.sendFile(
+        product.file,
+        {
+          root: path.join(storageDir(), 'ebook'),
+        },
+      );
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
   }
 
 }

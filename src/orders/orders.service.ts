@@ -1,14 +1,13 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { EbooksService } from '../ebooks/ebooks.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+import { EbooksService } from '../ebooks/ebooks.service';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order_item.entity';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class OrdersService {

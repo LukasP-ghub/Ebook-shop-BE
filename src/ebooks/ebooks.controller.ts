@@ -1,19 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, UseInterceptors, UploadedFiles, UseGuards, UseFilters } from '@nestjs/common';
-import { EbooksService } from './ebooks.service';
-import { AddEbookDto } from './dto/add-ebook.dto';
-import { UpdateEbookDto } from './dto/update-ebook.dto';
-import { MulterDiskUploadedFiles } from '../types';
-import { FilterEbookDto } from './dto/filter-ebook.dto';
-import { Ebook } from './entities/ebook.entity';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { multerStorage, storageDir } from '../utils/storage';
-import * as path from 'path';
-import { Serialize } from '../interceptors/serialize.interceptor';
-import { EbookDto } from './dto/ebook.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
 import { Roles } from '../decorators/roles.decorator';
-import { RolesGuard } from '../guards/roles.guard';
+import { UserObj } from '../decorators/user-obj.decorator';
 import { DeleteFileOnErrorFilter } from '../filters/deleteFileOnError.filter';
+import { RolesGuard } from '../guards/roles.guard';
+import { MulterDiskUploadedFiles } from '../types';
+import { User } from '../user/entities/user.entity';
+import { multerStorage, storageDir } from '../utils/storage';
+import { AddEbookDto } from './dto/add-ebook.dto';
+import { FilterEbookDto } from './dto/filter-ebook.dto';
+import { UpdateEbookDto } from './dto/update-ebook.dto';
+import { EbooksService } from './ebooks.service';
 
 
 @Controller('ebooks')
@@ -26,12 +25,23 @@ export class EbooksController {
     return await this.ebooksService.filter(query);
   }
 
-  @Get('/photo/:id')
+  @Get('/file/photo/:id')
   async getPhoto(
     @Param('id') id: string,
     @Res() res: any
   ): Promise<any> {
     return await this.ebooksService.getPhoto(id, res);
+  }
+
+  @Get('/file/ebook/:id')
+  @Roles('user')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async getEbookFile(
+    @Param('id') id: string,
+    @Res() res: any,
+    @UserObj() user: User
+  ): Promise<any> {
+    return await this.ebooksService.getEbookFile(id, user, res);
   }
 
   @Patch('/update/:id')

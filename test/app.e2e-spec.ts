@@ -1,13 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
-import { AppModule } from './../src/app.module';
-import { Ebook } from './../src/ebooks/entities/ebook.entity'
-import { setupApp } from '../src/setup-app';
+import * as request from 'supertest';
 import { AddEbookDto } from '../src/ebooks/dto/add-ebook.dto';
+import { setupApp } from '../src/setup-app';
 import { storageDir } from '../src/utils/storage';
-import { v4 as uuid } from 'uuid';
+import { AppModule } from './../src/app.module';
 
 
 
@@ -75,7 +73,8 @@ describe('App test (e2e)', () => {
       .post('/ebooks/add/ebook')
       .set("Cookie", adminLoginCookie)
       .set('Connection', 'keep-alive')
-      .attach('cover', path.join(storageDir(), 'book-covers', 'blue-butterfly-small.jpg'))
+      .attach('cover', path.join(storageDir('cover'), 'blue-butterfly-small.jpg'))
+      .attach('product', path.join(storageDir('product'), 'test.pdf'))
       .field('title', ebook.title)
       .field('pages', ebook.pages)
       .field('publication_date', ebook.publication_date)

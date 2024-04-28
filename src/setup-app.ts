@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { COOKIE_SECRET } from './config/secrets';
-import { AllExceptionsFilter } from './filters/allExceptionFilter.filter';
 
 export const setupApp = (app: any) => {
   app.enableCors({
@@ -20,6 +20,15 @@ export const setupApp = (app: any) => {
       exposeUnsetFields: false,
     }
   }));
+
+  const config = new DocumentBuilder()
+    .setTitle('Ebook store API description')
+    .setDescription('Description of the API for the ebook store application')
+    .setVersion('0.5')
+    .addTag('ebooks')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   //app.useGlobalFilters(new AllExceptionsFilter());
 

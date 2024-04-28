@@ -75,7 +75,7 @@ export class EbooksService {
       try {
         if (photo) {
           photo.forEach((item) => {
-            fs.unlink(path.join(storageDir(), 'book-covers', item.filename), (err) => {
+            fs.unlink(path.join(storageDir(item.fieldname), item.filename), (err) => {
               if (err) throw err;
               console.log(`file ${item.filename} was deleted`);
             });
@@ -135,6 +135,7 @@ export class EbooksService {
 
   async addEbook(req: AddEbookDto, files: MulterDiskUploadedFiles) {
     const photo = files?.cover ?? [];
+    const product = files?.product ?? [];
 
     try {
       const ebook = this.ebooksRepository.create();
@@ -170,6 +171,12 @@ export class EbooksService {
         })
       }
 
+      if (product.length) {
+        product.forEach(newElem => {
+          ebook.file = newElem.filename;
+        })
+      }
+
 
       try {
         const res = await this.ebooksRepository.save(ebook);
@@ -181,7 +188,16 @@ export class EbooksService {
       try {
         if (photo) {
           photo.forEach((item) => {
-            fs.unlink(path.join(storageDir(), 'book-covers', item.filename), (err) => {
+            fs.unlink(path.join(storageDir(item.fieldname), item.filename), (err) => {
+              if (err) throw err;
+              console.log(`file ${item.filename} was deleted`);
+            });
+          })
+        }
+
+        if (product) {
+          product.forEach((item) => {
+            fs.unlink(path.join(storageDir(item.fieldname), item.filename), (err) => {
               if (err) throw err;
               console.log(`file ${item.filename} was deleted`);
             });
@@ -209,7 +225,8 @@ export class EbooksService {
       res.sendFile(
         product.cover,
         {
-          root: path.join(storageDir(), 'book-covers'),
+          //root: path.join(storageDir(), 'book-covers'),
+          root: storageDir('cover')
         },
       );
     } catch (e) {
@@ -228,7 +245,8 @@ export class EbooksService {
       res.sendFile(
         product.file,
         {
-          root: path.join(storageDir(), 'ebook'),
+          //root: path.join(storageDir(), 'ebook'),
+          root: storageDir('ebook')
         },
       );
     } catch (e) {

@@ -1,8 +1,8 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
   BadRequestException,
+  Catch,
+  ExceptionFilter,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
@@ -28,7 +28,7 @@ export class DeleteFileOnErrorFilter implements ExceptionFilter {
     try {
       if (filePaths) {
         filePaths.forEach((item) => {
-          fs.unlink(path.join(storageDir(), 'book-covers', item.filename), (err) => {
+          fs.unlink(path.join(storageDir(item.fieldname), item.filename), (err) => {
             if (err) throw err;
             console.log(`file ${item.filename} was deleted`);
           });

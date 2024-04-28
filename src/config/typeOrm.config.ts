@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-const TYPEORM_CONFIG: TypeOrmModuleOptions = {
+let TYPEORM_CONFIG: TypeOrmModuleOptions = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,
@@ -20,7 +20,7 @@ switch (process.env.NODE_ENV) {
     break;
   case 'development':
     Object.assign(TYPEORM_CONFIG, {
-      database: 'wobclone',
+      database: 'wobclone_test',
     });
     break;
   case 'production':
@@ -29,7 +29,12 @@ switch (process.env.NODE_ENV) {
     });
     break;
   default:
-    throw new Error('No database specified for this environment');
+    //throw new Error('No database specified for this environment');
+    Object.assign(TYPEORM_CONFIG, {
+      database: 'wobclone_test',
+    });
+    break;
 }
 
-export default TYPEORM_CONFIG;
+export { TYPEORM_CONFIG };
+

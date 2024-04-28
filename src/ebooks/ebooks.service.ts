@@ -218,12 +218,19 @@ export class EbooksService {
 
   async getPhoto(ebook_id: string, res: any) {
     try {
-      const product = await this.ebooksRepository.findOneBy({ ebook_id });
+      const product = await this.ebooksRepository.findOne({
+        where: { ebook_id },
+        relations: {
+          cover: true
+        }
+      })
+      console.log(product);
+
       if (!product) throw new Error('No object found!');
       if (!product.cover) throw new Error('No photo in this entity!');
 
       res.sendFile(
-        product.cover,
+        product.cover[0].cover_id,
         {
           //root: path.join(storageDir(), 'book-covers'),
           root: storageDir('cover')

@@ -230,9 +230,8 @@ export class EbooksService {
       if (!product.cover) throw new Error('No photo in this entity!');
 
       res.sendFile(
-        product.cover[0].cover_id,
+        `${product.cover[0].cover_id}${path.extname(product.cover[0].cover_name)}`,
         {
-          //root: path.join(storageDir(), 'book-covers'),
           root: storageDir('cover')
         },
       );
@@ -252,7 +251,6 @@ export class EbooksService {
       res.sendFile(
         product.file,
         {
-          //root: path.join(storageDir(), 'ebook'),
           root: storageDir('ebook')
         },
       );

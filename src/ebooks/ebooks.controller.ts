@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../decorators/roles.decorator';
 import { UserObj } from '../decorators/user-obj.decorator';
 import { DeleteFileOnErrorFilter } from '../filters/deleteFileOnError.filter';
@@ -13,12 +14,21 @@ import { FilterEbookDto } from './dto/filter-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
 import { EbooksService } from './ebooks.service';
 
-
+@ApiTags('ebooks')
 @Controller('ebooks')
 export class EbooksController {
   constructor(private readonly ebooksService: EbooksService) { }
 
   //@Serialize(EbookDto)
+  @ApiOperation({
+    summary: 'GET -  filer ebooks',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Return filtered ebooks',
+    schema: { type: 'array', items: { type: 'object' } }
+  })
+  //@ApiQuery({ type: FilterEbookDto })
   @Get('/filter')
   async filter(@Query() query: FilterEbookDto) {
     return await this.ebooksService.filter(query);

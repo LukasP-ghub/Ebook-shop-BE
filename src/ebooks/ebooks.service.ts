@@ -224,7 +224,6 @@ export class EbooksService {
           cover: true
         }
       })
-      console.log(product);
 
       if (!product) throw new Error('No object found!');
       if (!product.cover) throw new Error('No photo in this entity!');
